@@ -2,7 +2,7 @@
 
 Welcome to my little collection of mods, feel free to leave bug reports or feature requests!
 
-Thanks for the great work on the repository template and mod skeleton @kafeijao
+Thanks for the great work on the repository template and mod skeleton [@kafeijao](https://github.com/kafeijao)
 
 ---
 
