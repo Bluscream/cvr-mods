@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
     <ItemGroup>
         <Reference Include="0Harmony">
             <HintPath>$(MsBuildThisFileDirectory)\.ManagedLibs\0Harmony.dll</HintPath>
@@ -208,12 +208,12 @@
             <HintPath>$(MsBuildThisFileDirectory)\.ManagedLibs\SteamAudioUnity.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="SteamVR">
-            <HintPath>$(MsBuildThisFileDirectory)\.ManagedLibs\SteamVR.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
         <Reference Include="SteamVR_Actions">
             <HintPath>$(MsBuildThisFileDirectory)\.ManagedLibs\SteamVR_Actions.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SteamVR">
+            <HintPath>$(MsBuildThisFileDirectory)\.ManagedLibs\SteamVR.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="System.Buffers">

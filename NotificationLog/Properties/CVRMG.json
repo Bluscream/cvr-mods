@@ -1,0 +1,20 @@
+{
+	"_id": -1,
+	"name": "NotificationLog",
+	"modversion": "1.0.0",
+	"gameversion": "2024r175",
+	"loaderversion": "v0.6.1",
+	"modtype": "Mod",
+	"author": "Bluscream",
+	"description": "Simple `Mod` that logs HUD Notifications to your MelonLoader console and log\n\n",
+	"searchtags": [
+		"logger",
+		"log",
+		"hud"
+	],
+	"requirements": [],
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F05%2F2024/NotificationLog.dll",
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/NotificationLog",
+	"changelog": "- Initial release.",
+	"embedcolor": "16C60C"
+}

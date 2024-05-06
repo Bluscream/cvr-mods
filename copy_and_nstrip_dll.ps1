@@ -1,8 +1,3 @@
-param(
-    # Whether it should ask user for inputs to proceed or in should run the whole script without prompting
-    [switch]$silent = $false
-)
-
 # CVR and Melon Loader Dependencies
 $0HarmonydllPath    = "\MelonLoader\net35\0Harmony.dll"
 $melonLoaderdllPath = "\MelonLoader\net35\MelonLoader.dll"
@@ -11,7 +6,7 @@ $cvrManagedDataPath = "\ChilloutVR_Data\Managed"
 
 $cvrPath = $env:CVRPATH
 $cvrExecutable = "ChilloutVR.exe"
-$cvrDefaultPath = "C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR"
+$cvrDefaultPath = "G:\Steam\steamapps\common\ChilloutVR"
 # $cvrDefaultPath = "E:\temp\CVR_Experimental"
 
 # Array with the dlls to strip
@@ -144,12 +139,9 @@ if ($missingMods.Count -gt 0) {
 Write-Host ""
 Write-Host "Copied all libraries!"
 Write-Host ""
-
-if (-not $silent) {
-    Write-Host "Press any key to strip the Dlls using NStrip"
-    $HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | OUT-NULL
-    $HOST.UI.RawUI.Flushinputbuffer()
-}
+Write-Host "Press any key to strip the Dlls using NStrip"
+$HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | OUT-NULL
+$HOST.UI.RawUI.Flushinputbuffer()
 
 Write-Host "NStrip Convert all private/protected stuff to public. Requires <AllowUnsafeBlocks>true></AllowUnsafeBlocks>"
 
@@ -177,9 +169,6 @@ foreach($dllFile in $dllsToStrip) {
 Write-Host ""
 Write-Host "Copied all libraries and stripped the DLLs!"
 Write-Host ""
-
-if (-not $silent) {
-    Write-Host "Press any key to exit"
-    $HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | OUT-NULL
-    $HOST.UI.RawUI.Flushinputbuffer()
-}
+Write-Host "Press any key to exit"
+$HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | OUT-NULL
+$HOST.UI.RawUI.Flushinputbuffer()
