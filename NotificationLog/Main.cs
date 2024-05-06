@@ -16,7 +16,7 @@ public class NotificationLog : MelonMod {
             var tag = player.userStaffTag;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userRank;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userClanTag;
-            MelonLogger.Msg(ModConfig.GetColor(ModConfig.LogPlayerJoinColorARGB.Value),
+            MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogPlayerJoinColorARGB.Value),
                 string.Format(ModConfig.LogPlayerJoinTemplate.Value,
                                       player.userName, tag, player.ownerId));
         });
@@ -25,7 +25,7 @@ public class NotificationLog : MelonMod {
             var tag = player.userStaffTag;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userRank;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userClanTag;
-            MelonLogger.Msg(ModConfig.GetColor(ModConfig.LogPlayerLeaveColorARGB.Value),
+            MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogPlayerLeaveColorARGB.Value),
                 string.Format(ModConfig.LogPlayerLeaveTemplate.Value,
                                       player.userName, tag, player.ownerId));
         });
@@ -35,13 +35,13 @@ public class NotificationLog : MelonMod {
             var privacy = ABI_RC.Core.Networking.IO.Instancing.Instances.GetPrivacy(ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy);
             var scene = SceneManager.GetActiveScene();
             var players = ABI_RC.Core.Player.CVRPlayerManager.Instance.NetworkPlayers.Count;
-            MelonLogger.Msg(ModConfig.GetColor(ModConfig.LogInstanceJoinsColorARGB.Value),
+            MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogInstanceJoinsColorARGB.Value),
                 string.Format(ModConfig.LogInstanceJoinsTemplate.Value,
                                       instance, privacy, players, scene.name, scene.path, scene.buildIndex));
         });
 
         //CVRGameEventSystem.World.OnLoad.AddListener(world => {
-        //    MelonLogger.Msg($"[CVRGameEventSystem.World.OnLoad] {CVRPlayerManager.Instance.NetworkPlayers.Count} {world} Type: {MetaPort.Instance.CurrentInstancePrivacy}");
+        //    MelonLogger.MsgDirect($"[CVRGameEventSystem.World.OnLoad] {CVRPlayerManager.Instance.NetworkPlayers.Count} {world} Type: {MetaPort.Instance.CurrentInstancePrivacy}");
         //});
 
         HarmonyInstance.Patch(
@@ -94,7 +94,7 @@ public class NotificationLog : MelonMod {
                     headline = headline?.Replace("\n", " ").Trim();
                     small = small?.Replace("\n", " ").Trim();
                 }
-                MelonLogger.Msg(ModConfig.GetColor(ModConfig.LogHUDNotificationsColorARGB.Value),
+                MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogHUDNotificationsColorARGB.Value),
                     string.Format(ModConfig.LogHUDNotificationsTemplate.Value,
                                           cat, headline, small)
                 );
