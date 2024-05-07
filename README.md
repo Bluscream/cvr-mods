@@ -11,6 +11,7 @@ Thanks for the great work on the repository template and mod skeleton [@kafeijao
 | Mod name                | More Info                                      | Latest                                                                                                                                                                                                                               | Description                                               |
 |-------------------------|------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | NotificationLog | [README.md](NotificationLog/README.md) | [![Download Latest NotificationLog.dll](.Resources/DownloadButtonEnabled.svg "Download Latest NotificationLog.dll")](https://github.com/Bluscream/cvr-mods/releases/latest/download/NotificationLog.dll) | Logs HUD Notifications to MelonLoader Console and Log |
+| PublicSafety | [README.md](PublicSafety/README.md) | [![Download Latest PublicSafety.dll](.Resources/DownloadButtonEnabled.svg "Download Latest PublicSafety.dll")](https://github.com/Bluscream/cvr-mods/releases/latest/download/PublicSafety.dll) | Allows you to auto-set certain settings (like URL whitelist) when you join public instances |
 
 ---
 
