@@ -32,7 +32,7 @@ public class NotificationLog : MelonMod {
 
         CVRGameEventSystem.Instance.OnConnected.AddListener(instance => {
             if (!ModConfig.EnableMod.Value || !ModConfig.LogInstanceJoins.Value) return;
-            var privacy = ABI_RC.Core.Networking.IO.Instancing.Instances.GetPrivacy(ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy);
+            var privacy = ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy;
             var scene = SceneManager.GetActiveScene();
             var players = ABI_RC.Core.Player.CVRPlayerManager.Instance.NetworkPlayers.Count;
             MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogInstanceJoinsColorARGB.Value),
