@@ -6,14 +6,14 @@
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple `Mod` that logs allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
+	"description": "Simple `Mod` that allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
 	"searchtags": [
 		"safety",
 		"security",
 		"automation"
 	],
 	"requirements": [],
-	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F05%2F2024/PublicSafety.dll",
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F07%2F2024/PublicSafety.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PublicSafety",
 	"changelog": "- Initial release.",
 	"embedcolor": "16C60C"

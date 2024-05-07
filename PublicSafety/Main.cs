@@ -30,43 +30,13 @@ public class PublicSafety : MelonMod {
 
         CVRGameEventSystem.Instance.OnConnected.AddListener(instance => {
             if (!ModConfig.EnableMod.Value) return;
-            // MelonLogger.Msg($"[CVRGameEventSystem.Instance.OnConnected] Waiting for next RPC update");
-            //if (instance != MetaPort.Instance.CurrentInstanceId)
-            //    MelonLogger.Warning($"instance {instance} does not match {MetaPort.Instance.CurrentInstanceId}");
             Task.Factory.StartNew(() => CommonMethods.SetSettings(instance));
-            //WaitingForRPC = true;
         });
     }
 
     internal static class CommonMethods {
-        //internal static void LogStatusAsync(string? instanceId = null, bool api = true) {
-        //    Task.Factory.StartNew(() => LogStatus(instanceId, api));
-        //}
-        //internal static void LogStatus(string? instanceId = null, bool useApi = true) {
-        //    instanceId ??= MetaPort.Instance.CurrentInstanceId;
-        //    var scene = SceneManager.GetActiveScene().name;
-        //    var privacy = GetPrivacy(MetaPort.Instance.CurrentInstancePrivacy);
-        //    string apiPrivacy = "";
-        //    if (useApi) {
-        //        var details = GetInstanceDetails(instanceId);
-        //        apiPrivacy = details.Data.InstanceSettingPrivacy;
-        //    }
-        //    MelonLogger.Msg($"instanceId: {instanceId}\nScene: {scene}\nMetaPort.Instance.CurrentInstancePrivacy: {privacy}\napiPrivacy: {apiPrivacy}\ncurrent: {CurrentInstancePrivacyType}");
-        //}
-        //internal static BaseResponse<InstanceDetailsResponse> GetInstanceDetails(string instanceId) { // CURSED !!!
-        //    BaseResponse<InstanceDetailsResponse> baseResponse = ApiConnection.MakeRequest<InstanceDetailsResponse>(ApiConnection.ApiOperation.InstanceDetail, new {
-        //        instanceID = instanceId
-        //    }, null, false).Result;
-        //    CurrentInstance = baseResponse;
-        //    CurrentInstancePrivacyType = GetPrivacy(baseResponse.Data.InstanceSettingPrivacy);
-        //    MetaPort.Instance.CurrentInstancePrivacy = baseResponse.Data.InstanceSettingPrivacy;
-        //    return baseResponse;
-        //}
         internal static void SetSettings(string? instanceId = null, Instances.InstancePrivacyType? instancePrivacyType = null) {
             if (!ModConfig.EnableMod.Value) return;
-            //instanceId ??= MetaPort.Instance.CurrentInstanceId;
-            //var details = GetInstanceDetails(_instanceId);
-            //var instancePrivacyString = details.Data.InstanceSettingPrivacy;
             instancePrivacyType ??= GetPrivacy(MetaPort.Instance.CurrentInstancePrivacy);
             var scene = SceneManager.GetActiveScene().name;
             switch (instancePrivacyType) {
@@ -91,38 +61,4 @@ public class PublicSafety : MelonMod {
             }
         }
     }
-
-    //[HarmonyPatch]
-    //internal class HarmonyPatches {
-    //    [HarmonyPrefix]
-    //    [HarmonyPatch(typeof(CVRWorld), nameof(CVRWorld.Start))]
-    //    public static void Before_CVRWorld_Start() {
-    //        MelonLogger.Msg("[Before_CVRWorld_Start]:");
-    //        CommonMethods.LogStatusAsync();
-    //    }
-
-    //    [HarmonyPostfix]
-    //    [HarmonyPatch(typeof(CVRWorld), nameof(CVRWorld.Start))]
-    //    public static void After_CVRWorld_Start() {
-    //        MelonLogger.Msg("[After_CVRWorld_Start]:");
-    //        CommonMethods.LogStatusAsync();
-    //    }
-
-    //    [HarmonyPostfix]
-    //    [HarmonyPatch(typeof(RichPresence), nameof(RichPresence.ReadPresenceUpdateFromNetwork))]
-    //    public static void After_RichPresence_ReadPresenceUpdateFromNetwork() {
-    //        try {
-    //            MelonLogger.Warning("After_RichPresence_ReadPresenceUpdateFromNetwork:");
-    //            CommonMethods.LogStatusAsync();
-    //            if (WaitingForRPC) {
-    //                WaitingForRPC = false;
-    //                var privacy = GetPrivacy(MetaPort.Instance.CurrentInstancePrivacy);
-    //                CommonMethods.SetSettings(privacy);
-    //            }
-    //        } catch (Exception e) {
-    //            MelonLogger.Error($"Error during the patched function {nameof(After_RichPresence_ReadPresenceUpdateFromNetwork)}");
-    //            MelonLogger.Error(e);
-    //        }
-    //    }
-    //}
 }
