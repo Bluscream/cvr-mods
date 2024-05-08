@@ -47,7 +47,7 @@ public static class ModConfig {
 
     public static void InitializeMelonPrefs() {
         _melonCategory = MelonPreferences.CreateCategory(AssemblyInfoParams.Name);
-        EnableMod = _melonCategory.CreateEntry("Enable NotificationLog", true,
+        EnableMod = _melonCategory.CreateEntry("Enable Mod", true,
             description: "The mod will do nothing while disabled");
 
         _BlacklistRegexes = _melonCategory.CreateEntry("Blacklist Regexes", new List<string>(),
