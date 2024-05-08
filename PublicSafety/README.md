@@ -1,4 +1,4 @@
-# PublicSafety
+# PublicSafety ChilloutVR Melonloader Mod
 
 ## Features
 - Auto-set certain settings when you join certain instance privacy types
