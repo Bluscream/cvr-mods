@@ -3,6 +3,17 @@
 ## Features
 - Allows you to auto-spawn props from a config file when you join worlds
 
+## Installation
+- Download [`PropSpawner.dll`](https://github.com/Bluscream/cvr-mods/releases/download/latest/PropSpawner.dll) from https://github.com/Bluscream/cvr-mods/releases
+- Move `PropSpawner.dll` from your downloads folder to `C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\Mods\`
+- Done
+
+## Usage
+- Install the mod manually using the [steps above](#installation)
+- Start your game once to let the mod generate the example config file
+- Navigate to `C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\UserData\PropConfigs\` and edit/delete/create prop configs to your liking.
+- Restart your game to apply your changes
+
 ## MelonPrefs
 | Preference Name | Type | Description | Default Value |
 |-----------------|------|-------------|---------------|
