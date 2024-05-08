@@ -9,7 +9,9 @@
 | EnableMod       | bool | The mod will do nothing while disabled | `true` |
 
 ## Example Config File
-
+```
+C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\UserData\PropConfigs\example.json
+```
 ```json
 [
   {
