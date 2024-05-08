@@ -1,7 +1,14 @@
-﻿using ABI_RC.Systems.GameEventSystem;
+﻿using ABI_RC.Core.Player;
+using ABI_RC.Core.Savior;
+using ABI_RC.Core.Util;
+using ABI_RC.Systems.GameEventSystem;
+using ABI_RC.Systems.Gravity;
+using ABI_RC.Systems.Movement;
 using HarmonyLib;
 using MelonLoader;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Cinemachine.CinemachineOrbitalTransposer;
 
 namespace Bluscream.NotificationLog;
 
@@ -35,9 +42,10 @@ public class NotificationLog : MelonMod {
             var privacy = ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy;
             var scene = SceneManager.GetActiveScene();
             var players = ABI_RC.Core.Player.CVRPlayerManager.Instance.NetworkPlayers.Count;
+            var worldId = MetaPort.Instance.CurrentWorldId;
             MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogInstanceJoinsColorARGB.Value),
                 string.Format(ModConfig.LogInstanceJoinsTemplate.Value,
-                                      instance, privacy, players, scene.name, scene.path, scene.buildIndex));
+                                      instance, privacy, players, scene.name, scene.path, scene.buildIndex, worldId));
         });
 
         //CVRGameEventSystem.World.OnLoad.AddListener(world => {
@@ -83,6 +91,14 @@ public class NotificationLog : MelonMod {
             }),
             prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
         );
+        HarmonyInstance.Patch(
+            AccessTools.Method(AccessTools.TypeByName("CVRSyncHelper"), "SpawnProp", new[] {
+                typeof(string), // cat
+                typeof(string), // headline
+                typeof(string) // small
+            }),
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
+        );
     }
     private static void HUDNotificationRecieved(string headline, string small) => HUDNotificationRecievedCat(null, headline, small);
     private static void HUDNotificationRecievedCat(string cat, string headline, string small) {
@@ -103,10 +119,32 @@ public class NotificationLog : MelonMod {
             MelonLogger.Error(e);
         }
     }
+    [HarmonyPatch]
+    internal class HarmonyPatches {
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CVRSyncHelper), nameof(CVRSyncHelper.SpawnProp))]
+        public static void After_SpawnProp(string propGuid, float posX, float posY, float posZ, bool useTargetLocationGravity) {
+            try {
+                if (!ModConfig.EnableMod.Value) return;
+                if (ModConfig.LogPropSpawns.Value) {
+                    Vector3 vector;
+                    if (useTargetLocationGravity) {
+                        vector = GravitySystem.TryGetResultingGravity(new Vector3(posX, posY, posZ), false).AppliedGravity.normalized;
+                    } else {
+                        vector = BetterBetterCharacterController.Instance.GetGravityDirection();
+                    }
+                    Quaternion rot = Quaternion.LookRotation(Vector3.ProjectOnPlane((PlayerSetup.Instance.CharacterController.RotationPivot.position - new Vector3(posX, posY, posZ)).normalized, -vector), -vector);
+                    MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogPropSpawnsColorARGB.Value),
+                        string.Format(ModConfig.LogPropSpawnsTemplate.Value,
+                                              propGuid, $"X:{posX} Y:{posY} Z:{posZ}", $"X:{rot.x} Y:{rot.y} Z:{rot.z}")
+                    );
+                }
+            } catch (Exception e) {
+                MelonLogger.Error(e);
+            }
+        }
+    }
 }
-
-//    [HarmonyPatch]
-//    internal class HarmonyPatches {
 //        [HarmonyPrefix]
 //        [HarmonyPatch(typeof(CVRWorld), nameof(CVRWorld.Start))]
 //        public static void Before_CVRWorld_Start() {
@@ -129,5 +167,3 @@ public class NotificationLog : MelonMod {
 //                MelonLogger.Error(e);
 //            }
 //        }
-//    }
-//}

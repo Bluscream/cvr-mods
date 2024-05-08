@@ -5,9 +5,6 @@
     <OutputPath>G:/Steam/steamapps/common/ChilloutVR/Mods/</OutputPath>
   </PropertyGroup>
   <Target Name="AfterBuild">
-    <Copy SourceFiles="$(TargetPath)"
-          DestinationFolder="G:/Steam/steamapps/common/ChilloutVR/Mods"
-          OverwriteReadOnlyFiles="true"
-          SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="G:/Steam/steamapps/common/ChilloutVR/Mods" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" />
   </Target>
 </Project>

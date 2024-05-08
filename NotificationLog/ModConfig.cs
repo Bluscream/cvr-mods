@@ -39,6 +39,10 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<List<ushort>> LogPlayerLeaveColorARGB;
     internal static MelonPreferences_Entry<string> LogPlayerLeaveTemplate;
 
+    internal static MelonPreferences_Entry<bool> LogPropSpawns;
+    internal static MelonPreferences_Entry<List<ushort>> LogPropSpawnsColorARGB;
+    internal static MelonPreferences_Entry<string> LogPropSpawnsTemplate;
+
     internal static Color GetColor(List<ushort> _c) => Color.FromArgb(_c[0], _c[1], _c[2], _c[3]);  // cursed
 
     public static void InitializeMelonPrefs() {
@@ -62,8 +66,8 @@ public static class ModConfig {
             description: "Whether to log switching instances (Uses CVRGameEventSystem.Instance.OnConnected)");
         LogInstanceJoinsColorARGB = _melonCategory.CreateEntry("Instance Join Log Color (ARGB)", new List<ushort> { 230, 255, 255, 255 },
             description: "The color to use in the MelonLoader Console when logging Instance Joins");
-        LogInstanceJoinsTemplate = _melonCategory.CreateEntry("Instance Join Log Template", "[Instance] {0} Privacy: {1} | Players: {2} | Scene: {3}/{4} ({5})",
-            description: "The template to use for logging Instance Joins (The following replacements are available: {0}=name,{1}=privacy,{2}=players),{3}=scene name),{4}=scene path),{5}=scene id)");
+        LogInstanceJoinsTemplate = _melonCategory.CreateEntry("Instance Join Log Template", "[Instance] {0} Privacy: {1} | Players: {2} | Scene: {3} ({5}) | World: {6}",
+            description: "The template to use for logging Instance Joins (The following replacements are available: {0}=name,{1}=privacy,{2}=players),{3}=scene name),{4}=scene path),{5}=scene id,{6}=world id)");
 
         LogPlayerJoinLeaves = _melonCategory.CreateEntry("Log Players joining/leaving", false,
             description: "Whether to log players joining/leaving your instance (Uses CVRGameEventSystem.Player.OnJoin/OnLeave)");
@@ -77,6 +81,13 @@ public static class ModConfig {
             description: "The color to use in the MelonLoader Console when logging Instance Joins");
         LogPlayerLeaveTemplate = _melonCategory.CreateEntry("Player Leave Log Template", "[-] {1} \"{0}\" [{2}]",
             description: "The template to use for logging players leaving (The following replacements are available: {0}=name,{1}=rank,{2}=id)");
+
+        LogPropSpawns = _melonCategory.CreateEntry("Log spawned props", false,
+            description: "Wether to log props you spawn to console/MelonLoader log");
+        LogPropSpawnsColorARGB = _melonCategory.CreateEntry("Prop Spawn Log Color (ARGB)", new List<ushort> { 250, 255, 255, 255 },
+            description: "The color to use in the MelonLoader Console when logging prop spawns");
+        LogPropSpawnsTemplate = _melonCategory.CreateEntry("Prop Spawn Log Template", "[Prop Spawned] {0} pos: {1} rot: {2}",
+            description: "The template to use for logging prop spawns (The following replacements are available: {0}=id,{1}=position,{2}=rotation)");
     }
 
 }
