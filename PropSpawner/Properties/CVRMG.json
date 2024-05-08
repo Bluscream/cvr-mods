@@ -1,0 +1,20 @@
+{
+	"_id": -1,
+	"name": "PropSpawner",
+	"modversion": "1.0.0",
+	"gameversion": "2024r175",
+	"loaderversion": "v0.6.1",
+	"modtype": "Mod",
+	"author": "Bluscream",
+	"description": "Simple `Mod` that allows you to auto-spawn certain props when you join\n\n",
+	"searchtags": [
+		"automation",
+		"prop",
+		"props"
+	],
+	"requirements": [],
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F07%2F2024/PropSpawner.dll",
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PropSpawner",
+	"changelog": "- Initial release.",
+	"embedcolor": "16C60C"
+}
