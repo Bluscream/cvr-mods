@@ -3,6 +3,15 @@
 ## Features
 - Log HUD Notifications to your MelonLoader console/log
 
+## Installation
+- Download [`NotificationLog.dll`](https://github.com/Bluscream/cvr-mods/releases/download/latest/NotificationLog.dll) from https://github.com/Bluscream/cvr-mods/releases
+- Move `NotificationLog.dll` from your downloads folder to `C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\Mods\`
+- Done
+
+## Usage
+- Install the mod manually using the [steps above](#installation)
+- Start your game and adjust the mod settings to your liking
+
 ## MelonPrefs
 | Preference Name | Type | Description | Default Value |
 |-----------------|------|-------------|---------------|
