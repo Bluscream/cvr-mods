@@ -17,15 +17,24 @@ public static partial class Extensions {
             MelonLogger.Warning($"Tried to convert list with {cnt} floats to Vector3!");
             return null;
         }
-        return new Vector3(floats[0], floats[1], floats[3]);
+        return new Vector3(floats[0], floats[1], floats[2]);
     }
-
     public static Quaternion? ToQuaternion(this IList<float> floats) {
         var cnt = floats.Count();
-        if (cnt < 3 || cnt > 4) {
-            MelonLogger.Warning($"Tried to convert list with {cnt} floats to Quaternion!");
-            return null;
+        switch (cnt) {
+            case 3: return new Quaternion() { x = floats[0], y = floats[1], z = floats[2] };
+            case 4: return new Quaternion() { x = floats[0], y = floats[1], z = floats[2], w = floats[3] };
+            default: MelonLogger.Warning($"Tried to convert list with {cnt} floats to Quaternion!"); return null;
         }
-        return new Quaternion() { x = floats[0], y = floats[1], z = floats[2], w = floats[3] };
+    }
+    public static string ToString(this IList<float>? floats) {
+        return floats != null ? string.Join(", ", floats) : string.Empty;
+    }
+
+    public static string ToString(this Vector3 v) {
+        return $"X:{v.x} Y:{v.y} Z:{v.z}";
+    }
+    public static string ToString(this Quaternion q) {
+        return $"X:{q.x} Y:{q.y} Z:{q.z} W:{q.w}";
     }
 }

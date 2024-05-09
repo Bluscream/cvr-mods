@@ -10,7 +10,6 @@ namespace Bluscream.PropSpawner;
 
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -50,7 +49,7 @@ public partial class PropRule {
     /// <summary>
     /// Optional field that when set will force a random prop from the list to be selected everytime
     /// </summary>
-    internal virtual bool PropSelectionRandom { get; set; }
+    internal virtual bool? PropSelectionRandom { get; set; }
 
     [JsonProperty("props", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
@@ -60,15 +59,18 @@ public partial class PropRule {
 
     public override string ToString() {
         var ruleMatch = WorldId ?? WorldName ?? SceneName ?? InstancePrivacy;
-        return $"PropRule \"{ruleMatch}\" ({Props.Count} props{(PropSelectionRandom ? ", random" : "")})";
+        return $"PropRule \"{ruleMatch}\" ({Props.Count} props{(PropSelectionRandom.Value ? ", random" : "")})";
     }
 
     public bool Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
-        var worldWildcard = (WorldId is null && SceneName is null) || WorldId.Any(w => w == "*" || SceneName.Any(w => w == "*") || WorldName.Any(w => w == "*"));
-        var worldIdValid = WorldId.Any(w => w == worldId);
-        var worldNameValid = WorldName.Any(w => w == worldName);
-        var sceneNameValid = SceneName.Any(s => s == sceneName);
-        if (!worldWildcard && !worldIdValid && !worldNameValid && !sceneNameValid) return false;
+        //MelonLogger.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
+        var worldMissing = WorldId is null && SceneName is null && WorldName is null && InstancePrivacy is null;
+        //var worldWildcard = WorldId.Any(w => w == "*") && SceneName.Any(w => w == "*") && WorldName.Any(w => w == "*") && InstancePrivacy.Any(w => w == "*");
+        var worldIdValid = WorldId != null && WorldId.Any(w => w == worldId);
+        var worldNameValid = WorldName != null && WorldName.Any(w => w == worldName);
+        var sceneNameValid = SceneName != null && SceneName.Any(s => s == sceneName);
+        //MelonLogger.Warning($"debug PropRule.Matches end  {worldMissing} {worldIdValid} {worldNameValid} {sceneNameValid}");
+        if (!worldMissing && !worldIdValid && !worldNameValid && !sceneNameValid) return false;
         return true;
     }
 }
@@ -99,7 +101,7 @@ public partial class Prop {
     internal virtual List<float>? Rotation { get; set; }
 
     public override string ToString() {
-        return $"Prop \"{Name}\" ({Id}) at {Position} ({Rotation})";
+        return $"\"{Name}\" ({Id}) at {Extensions.ToString(Position)} ({Extensions.ToString(Rotation)})";
     }
 }
 
