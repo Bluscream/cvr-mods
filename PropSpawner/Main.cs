@@ -14,29 +14,28 @@ using DarkRift;
 namespace Bluscream.PropSpawner;
 
 public class PropSpawner : MelonMod {
+    private protected const ushort PropLimitPerRule = 3;
     private Queue<Prop> propSpawnQueue = new();
     public override void OnInitializeMelon() {
         ModConfig.InitializeMelonPrefs();
-
         CVRGameEventSystem.Instance.OnConnected.AddListener(instance => {
             if (!ModConfig.EnableMod.Value) return;
             var worldId = MetaPort.Instance.CurrentWorldId;
             Task.Factory.StartNew(() => QueueProps(worldId));
         });
-
         PropConfigManager.Initialize();
     }
 
     public override void OnUpdate() {
         if (propSpawnQueue.Count == 0 || !ModConfig.EnableMod.Value) return;
         var prop = propSpawnQueue.Dequeue();
-        if (prop._Position != null) {
-            var p = prop.Position.Value;
-            if (prop._Rotation != null) {
-                var r = prop.Rotation.Value;
-                SpawnProp(prop.Id, p.x, p.y, p.z, true, r.x, r.y, r.z);
+        if (prop.Position != null) {
+            var p = prop.Position.ToVector3();
+            if (prop.Rotation != null) {
+                var r = prop.Rotation.ToQuaternion();
+                SpawnProp(prop.Id, p, true, r);
             } else {
-                SpawnProp(prop.Id, p.x, p.y, p.z, true);
+                SpawnProp(prop.Id, p, true);
             }
         } else {
             SpawnProp(prop.Id, null, null, null, true); // PlayerSetup.Instance.SpawnProp(prop.Id, PlayerSetup.Instance.gameObject.transform.position);
@@ -48,17 +47,17 @@ public class PropSpawner : MelonMod {
         if (!ModConfig.EnableMod.Value) return;
         worldId ??= MetaPort.Instance.CurrentWorldId;
         sceneName ??= SceneManager.GetActiveScene().name;
-        foreach (var rule in PropConfigManager.Rules) {
-            var worldWildcard = ((rule.WorldId is null && rule.SceneName is null) || (rule.WorldId == "*" || rule.SceneName == "*"));
-            var worldIdValid = (rule.WorldId == worldId);
-            var sceneNameValid = (rule.SceneName == sceneName);
-            if (!worldWildcard && !worldIdValid && !sceneNameValid) continue;
+        var validRules = PropConfigManager.Matches(worldId, worldName, sceneName);
+        foreach (var rule in validRules) {
             if (rule.PropSelectionRandom) {
                 var randomProp = rule.Props.PickRandom();
                 propSpawnQueue.Enqueue(randomProp);
                 MelonLogger.Msg($"Added prop {randomProp} to queue");
             } else {
-                if (rule.Props.Count > 3) throw new Exception("Exceeded prop autospawn limit of 3, can't continue");
+                if (rule.Props.Count > PropLimitPerRule) {
+                    MelonLogger.Warning($"Exceeded prop autospawn limit of {PropLimitPerRule}, can't continue");
+                    continue;
+                }
                 foreach (var prop in rule.Props) {
                     propSpawnQueue.Enqueue(prop);
                     MelonLogger.Msg($"Added prop {prop} to queue");
@@ -66,8 +65,8 @@ public class PropSpawner : MelonMod {
             }
         }
     }
-
-    public static void SpawnProp(string propGuid, float? posX, float? posY, float? posZ, bool useTargetLocationGravity, float? rotX = null, float? rotY = null, float? rotZ = null) { // THIS IS CURSED PLEASE END ME
+    public static void SpawnProp(string propGuid, Vector3? pos, bool useTargetLocationGravity = false, Quaternion? rot = null) => SpawnProp(propGuid, pos.Value.x, pos.Value.y, pos.Value.z, useTargetLocationGravity, rot.Value.x, rot.Value.y, rot.Value.z);
+    public static void SpawnProp(string propGuid, float? posX, float? posY, float? posZ, bool useTargetLocationGravity = false, float? rotX = null, float? rotY = null, float? rotZ = null) { // THIS IS CURSED PLEASE END ME
         if (!CVRSyncHelper.IsConnectedToGameNetwork()) {
             ViewManager.Instance.NotifyUserAlert("(Local) Client", "Cannot spawn prop", "Not connected to an online Instance");
             return;
@@ -81,7 +80,7 @@ public class PropSpawner : MelonMod {
             return;
         }
         if (MetaPort.Instance.settings.GetSettingsBool("HUDCustomizationPropSpawned", false)) {
-            ViewManager.Instance.NotifyUser("(Synced) Client", "Prop spawned", 1f);
+            ViewManager.Instance.NotifyUser("(Synced) Client", $"{propGuid} spawned", 1f);
         }
         Vector3 vector;
         Vector3 playerPosition = PlayerSetup.Instance.gameObject.transform.position;

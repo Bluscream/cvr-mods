@@ -6,106 +6,120 @@
 //
 //    var propConfig = PropConfig.FromJson(jsonString);
 
-namespace Bluscream.PropSpawner {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using UnityEngine;
+namespace Bluscream.PropSpawner;
 
-    //internal enum PropSelectionMode {
-    //    All,
-    //    Random
-    //}
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
-    public partial class PropRule {
-        [JsonProperty("worldId", NullValueHandling = NullValueHandling.Ignore)]
-        /// <summary>
-        /// Optional field that contains the gid of the world where this rule will take effect
-        /// </summary>
-        public virtual string WorldId { get; set; }
+//internal enum PropSelectionMode {
+//    All,
+//    Random
+//}
 
-        //[JsonProperty("worldName", NullValueHandling = NullValueHandling.Ignore)]
-        ///// <summary>
-        ///// Optional field that contains the name of the world where this rule will take effect
-        ///// </summary>
-        //public virtual string WorldName { get; set; }
+public partial class PropRule {
+    [JsonProperty("worldId", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the gid of the world where this rule will take effect
+    /// </summary>
+    public virtual List<string> WorldId { get; set; }
 
-        [JsonProperty("sceneName", NullValueHandling = NullValueHandling.Ignore)]
-        /// <summary>
-        /// Optional field that contains the name of the unity scene where this rule will take effect
-        /// </summary>
-        public virtual string SceneName { get; set; }
+    [JsonProperty("worldName", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the name of the world where this rule will take effect
+    /// </summary>
+    public virtual List<string> WorldName { get; set; }
 
-        [JsonProperty("propSelectionRandom", NullValueHandling = NullValueHandling.Ignore)]
-        /// <summary>
-        /// Optional field that when set will force a random prop from the list to be selected everytime
-        /// </summary>
-        internal virtual bool PropSelectionRandom { get; set; }
+    [JsonProperty("sceneName", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the name of the unity scene where this rule will take effect
+    /// </summary>
+    public virtual List<string> SceneName { get; set; }
 
-        [JsonProperty("props", NullValueHandling = NullValueHandling.Ignore)]
-        /// <summary>
-        /// Required field that contains the list of props that spawn if this rule applies
-        /// </summary>
-        public virtual List<Prop> Props { get; set; }
+    [JsonProperty("instancePrivacy", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the instance privacy where this rule will take effect
+    /// </summary>
+    public virtual List<string> InstancePrivacy { get; set; }
+
+
+
+    [JsonProperty("propSelectionRandom", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that when set will force a random prop from the list to be selected everytime
+    /// </summary>
+    internal virtual bool PropSelectionRandom { get; set; }
+
+    [JsonProperty("props", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Required field that contains the list of props that spawn if this rule applies
+    /// </summary>
+    public virtual List<Prop> Props { get; set; }
+
+    public override string ToString() {
+        var ruleMatch = WorldId ?? WorldName ?? SceneName ?? InstancePrivacy;
+        return $"PropRule \"{ruleMatch}\" ({Props.Count} props{(PropSelectionRandom ? ", random" : "")})";
     }
 
-    public partial class Prop {
-        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        /// <summary>
-        /// Required field that contains the gid of the prop
-        /// </summary>
-        public virtual string Id { get; set; }
-
-        [JsonProperty("position", NullValueHandling = NullValueHandling.Ignore)]
-        internal virtual Tion? _Position { get; set; }
-        [JsonIgnore]
-        /// <summary>
-        /// Optional field that contains the Vector3 Position of the prop to spawn. If omitted, it will spawn at player position
-        /// </summary>
-        public virtual Vector3? Position { get { return _Position != null ? new Vector3(_Position.X, _Position.Y, _Position.Z) : null; } }
-
-        [JsonProperty("rotation", NullValueHandling = NullValueHandling.Ignore)]
-        internal virtual Tion? _Rotation { get; set; }
-        [JsonIgnore]
-        /// <summary>
-        /// Optional field that contains the Quaternion Rotation of the prop to spawn. If omitted it will spawn with player angles
-        /// </summary>
-        public virtual Quaternion? Rotation {
-            get { return _Rotation != null ? new Quaternion() { x = _Position.X, y = _Position.Y, z = _Position.Z } : null; }
-        }
-
-        public partial class Tion {
-            [JsonProperty("x", NullValueHandling = NullValueHandling.Ignore)]
-            public virtual float X { get; set; }
-
-            [JsonProperty("y", NullValueHandling = NullValueHandling.Ignore)]
-            public virtual float Y { get; set; }
-
-            [JsonProperty("z", NullValueHandling = NullValueHandling.Ignore)]
-            public virtual float Z { get; set; }
-        }
+    public bool Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
+        var worldWildcard = (WorldId is null && SceneName is null) || WorldId.Any(w => w == "*" || SceneName.Any(w => w == "*") || WorldName.Any(w => w == "*"));
+        var worldIdValid = WorldId.Any(w => w == worldId);
+        var worldNameValid = WorldName.Any(w => w == worldName);
+        var sceneNameValid = SceneName.Any(s => s == sceneName);
+        if (!worldWildcard && !worldIdValid && !worldNameValid && !sceneNameValid) return false;
+        return true;
     }
+}
 
-    public partial class PropConfig {
-        public static List<PropRule> FromFile(string filePath) => FromJson(File.ReadAllText(filePath));
-        public static List<PropRule> FromJson(string json) => JsonConvert.DeserializeObject<List<PropRule>>(json, Bluscream.PropSpawner.Converter.Settings);
+public partial class Prop {
+    [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Required field that contains the gid of the prop
+    /// </summary>
+    public virtual string Id { get; set; }
+
+    [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the name of the prop (unused)
+    /// </summary>
+    public virtual string Name { get; set; }
+
+    [JsonProperty("position", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the Vector3 Position of the prop to spawn. If omitted, it will spawn at player position
+    /// </summary>
+    internal virtual List<float>? Position { get; set; }
+
+    [JsonProperty("rotation", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains the Quaternion Rotation of the prop to spawn. If omitted it will spawn with player angles
+    /// </summary>
+    internal virtual List<float>? Rotation { get; set; }
+
+    public override string ToString() {
+        return $"Prop \"{Name}\" ({Id}) at {Position} ({Rotation})";
     }
+}
 
-    public static class Serialize {
-        public static string ToJson(this List<PropRule> self) => JsonConvert.SerializeObject(self, Bluscream.PropSpawner.Converter.Settings);
-        public static void ToFile(this List<PropRule> self, string filePath) => File.WriteAllText(filePath, self.ToJson());
-    }
+public partial class PropConfig {
+    public static List<PropRule> FromFile(string filePath) => FromJson(File.ReadAllText(filePath));
+    public static List<PropRule> FromJson(string json) => JsonConvert.DeserializeObject<List<PropRule>>(json, Bluscream.PropSpawner.Converter.Settings);
+}
 
-    internal static class Converter {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings {
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.None,
-            Formatting = Formatting.Indented,
-            Converters = {
+public static class Serialize {
+    public static string ToJson(this List<PropRule> self) => JsonConvert.SerializeObject(self, Bluscream.PropSpawner.Converter.Settings);
+    public static void ToFile(this List<PropRule> self, string filePath) => File.WriteAllText(filePath, self.ToJson());
+}
+
+internal static class Converter {
+    public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings {
+        MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+        DateParseHandling = DateParseHandling.None,
+        Formatting = Formatting.Indented,
+        Converters = {
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
-        };
-    }
+    };
 }

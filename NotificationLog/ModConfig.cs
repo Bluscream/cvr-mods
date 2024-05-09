@@ -66,8 +66,9 @@ public static class ModConfig {
             description: "Whether to log switching instances (Uses CVRGameEventSystem.Instance.OnConnected)");
         LogInstanceJoinsColorARGB = _melonCategory.CreateEntry("Instance Join Log Color (ARGB)", new List<ushort> { 230, 255, 255, 255 },
             description: "The color to use in the MelonLoader Console when logging Instance Joins");
-        LogInstanceJoinsTemplate = _melonCategory.CreateEntry("Instance Join Log Template", "[Instance] {0} Privacy: {1} | Players: {2} | Scene: {3} ({5}) | World: {6}",
-            description: "The template to use for logging Instance Joins (The following replacements are available: {0}=name,{1}=privacy,{2}=players),{3}=scene name),{4}=scene path),{5}=scene id,{6}=world id)");
+        LogInstanceJoinsTemplate = _melonCategory.CreateEntry("Instance Join Log Template", "[Instance] {1} ({0}) Privacy: {2} Players: {3} | Scene: {4} ({6}) | World: {8} ({7})",
+            description: "The template to use for logging Instance Joins (The following replacements are available: {0}=instanceId,{1}=instanceName,{2}=instancePrivacy,{3}=playerCount,{4}=scene name,{5}=scene path,{6}=scene index,{7}=world id,{8}=world name)");
+        // instanceId, instanceName, privacy, players, scene.name, scene.path, scene.buildIndex, worldId, worldName
 
         LogPlayerJoinLeaves = _melonCategory.CreateEntry("Log Players joining/leaving", false,
             description: "Whether to log players joining/leaving your instance (Uses CVRGameEventSystem.Player.OnJoin/OnLeave)");

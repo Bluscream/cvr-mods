@@ -37,15 +37,17 @@ public class NotificationLog : MelonMod {
                                       player.userName, tag, player.ownerId));
         });
 
-        CVRGameEventSystem.Instance.OnConnected.AddListener(instance => {
+        CVRGameEventSystem.Instance.OnConnected.AddListener(instanceId => {
             if (!ModConfig.EnableMod.Value || !ModConfig.LogInstanceJoins.Value) return;
-            var privacy = ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy;
+            var instancePrivacy = ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy;
             var scene = SceneManager.GetActiveScene();
-            var players = ABI_RC.Core.Player.CVRPlayerManager.Instance.NetworkPlayers.Count;
+            var playerCount = ABI_RC.Core.Player.CVRPlayerManager.Instance.NetworkPlayers.Count;
             var worldId = MetaPort.Instance.CurrentWorldId;
+            var instanceName = MetaPort.Instance.CurrentInstanceName;
+            var worldName = instanceName.Split(" (#").First();
             MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogInstanceJoinsColorARGB.Value),
                 string.Format(ModConfig.LogInstanceJoinsTemplate.Value,
-                                      instance, privacy, players, scene.name, scene.path, scene.buildIndex, worldId));
+                                      instanceId, instanceName, instancePrivacy, playerCount, scene.name, scene.path, scene.buildIndex, worldId, worldName));
         });
 
         //CVRGameEventSystem.World.OnLoad.AddListener(world => {
