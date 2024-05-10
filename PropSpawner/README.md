@@ -1,4 +1,82 @@
-# NotificationLog
+# PropSpawner ChilloutVR Melonloader Mod
 
 ## Features
-- Log HUD Notifications to your MelonLoader console/log
+- Allows you to auto-spawn props from a config file when you join worlds
+
+## Installation
+- Download [`PropSpawner.dll`](https://github.com/Bluscream/cvr-mods/releases/download/latest/PropSpawner.dll) from https://github.com/Bluscream/cvr-mods/releases
+- Move `PropSpawner.dll` from your downloads folder to `C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\Mods\`
+- Done
+
+## Usage
+- Install the mod manually using the [steps above](#installation)
+- Start your game once to let the mod generate the example config file
+- Navigate to `C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\UserData\PropConfigs\` and edit/delete/create prop configs to your liking.
+- Restart your game to apply your changes
+
+## MelonPrefs
+| Preference Name | Type | Description | Default Value |
+|-----------------|------|-------------|---------------|
+| EnableMod       | bool | The mod will do nothing while disabled | `true` |
+
+## Example Config File
+```
+C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\UserData\PropConfigs\example.json
+```
+```json
+[
+  {
+    "propSelectionRandom": true,
+    "props": [
+      {
+        "id": "6cfe9b93-27d7-43dd-a0b5-63900c2872f2"
+      },
+      {
+        "id": "d9f0d320-13c0-4a19-ba76-f85f04e9704b"
+      },
+      {
+        "id": "9c5366ad-8e33-4f87-a6d6-db2c642a1cf1"
+      },
+      {
+        "id": "26bd606e-a44c-4e95-8b44-e84f456aee65"
+      },
+      {
+        "id": "dc0663a7-7c88-43ca-a52c-9b645ad1e860"
+      }
+    ]
+  },
+  {
+    "worldId": "406acf24-99b1-4119-8883-4fcda4250743",
+    "sceneName": "ThePurpleFoxV2",
+    "propSelectionRandom": false,
+    "props": [
+      {
+        "id": "1f0aa960-e4ac-44fe-82f4-334eb4eb4959",
+        "position": {
+          "x": 483.75,
+          "y": -4.36,
+          "z": 100.51
+        },
+        "rotation": {
+          "x": 0.0,
+          "y": -0.7177276,
+          "z": 0.0
+        }
+      },
+      {
+        "id": "16cb1cef-fc83-4ddb-8c98-007e2455d970",
+        "position": {
+          "x": -8.162736,
+          "y": -2.499999,
+          "z": 3.811112
+        },
+        "rotation": {
+          "x": 0.0,
+          "y": 0.9999966,
+          "z": 0.0
+        }
+      }
+    ]
+  }
+]
+```
