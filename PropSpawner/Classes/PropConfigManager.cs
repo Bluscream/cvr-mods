@@ -42,7 +42,9 @@ namespace Bluscream.PropSpawner {
             //MelonLogger.Warning("debug PropConfigManager.Matches start");
             var results = new List<PropRule>();
             foreach (var rule in Rules) {
-                if (rule.Matches(worldId, worldName, sceneName, instancePrivacy)) results.Add(rule);
+                var matches = rule.Matches(worldId, worldName, sceneName, instancePrivacy);
+                MelonLogger.Warning($"debug List<PropRule> Matches {rule} matches {matches}");
+                if (matches) results.Add(rule);
             }
             //MelonLogger.Warning($"debug PropConfigManager.Matches end {results.Count}");
             return results;

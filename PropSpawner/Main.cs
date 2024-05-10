@@ -17,6 +17,7 @@ namespace Bluscream.PropSpawner;
 public class PropSpawner : MelonMod {
     private protected const ushort PropLimitPerRule = 3;
     private Queue<Prop> propSpawnQueue = new();
+    private int propSpawnQueueCount = 0;
     public override void OnInitializeMelon() {
         ModConfig.InitializeMelonPrefs();
 
@@ -29,52 +30,47 @@ public class PropSpawner : MelonMod {
 
     public override void OnUpdate() {
         if (propSpawnQueue.Count == 0 || !ModConfig.EnableMod.Value) return;
-        MelonLogger.Warning("debug OnUpdate start");
         var prop = propSpawnQueue.Dequeue();
-        MelonLogger.Warning("debug OnUpdate 1");
+        if (propSpawnQueue.Count == 0) {
+            if (MetaPort.Instance.settings.GetSettingsBool("HUDCustomizationPropSpawned", false)) {
+                ViewManager.Instance.NotifyUser("PropSpawner", $"Automatically spawned {propSpawnQueueCount} props", 1f);
+            }
+            propSpawnQueueCount = 0;
+        }
         if (prop is null) return;
-        MelonLogger.Warning("debug OnUpdate 2");
         if (prop.Position != null) {
-            MelonLogger.Warning("debug OnUpdate 3");
             var p = prop.Position.ToVector3();
-            MelonLogger.Warning("debug OnUpdate 4");
             if (prop.Rotation != null) {
-                MelonLogger.Warning("debug OnUpdate 5");
                 var r = prop.Rotation.ToQuaternion();
-                MelonLogger.Warning("debug OnUpdate 6");
                 SpawnProp(prop.Id, p, r, useTargetLocationGravity: false);
-                MelonLogger.Warning("debug OnUpdate 7");
             } else {
-                MelonLogger.Warning("debug OnUpdate 8");
                 SpawnProp(prop.Id, p, useTargetLocationGravity: false);
-                MelonLogger.Warning("debug OnUpdate 9");
             }
         } else {
-            MelonLogger.Warning("debug OnUpdate 10");
             SpawnProp(prop.Id, useTargetLocationGravity: false); // PlayerSetup.Instance.SpawnProp(prop.Id, PlayerSetup.Instance.gameObject.transform.position);
-            MelonLogger.Warning("debug OnUpdate 11");
         }
-        MelonLogger.Msg($"Spawned prop {prop}");
+        //MelonLogger.Msg($"Spawned prop {prop}");
     }
     internal void QueueProp(Prop prop, int delay = 1) {
-        MelonLogger.Warning("debug QueueProp start");
+        //MelonLogger.Warning("debug QueueProp start");
         propSpawnQueue.Enqueue(prop);
         for (int i = 0; i < delay; i++) {
             propSpawnQueue.Enqueue(null);
         }
-        MelonLogger.Warning("debug QueueProp end");
+        //MelonLogger.Warning("debug QueueProp end");
     }
-    internal void QueueProps(string? worldId = null, string? worldName = null, string? sceneName = null) {
-        MelonLogger.Warning($"debug QueueProps start");
+    internal void QueueProps(string? worldId = null, string? worldName = null, string? sceneName = null, string? instancePrivacy = null) {
+        //MelonLogger.Warning($"debug QueueProps start");
         if (!ModConfig.EnableMod.Value) return;
         worldId ??= MetaPort.Instance.CurrentWorldId;
         sceneName ??= SceneManager.GetActiveScene().name;
-        var validRules = PropConfigManager.Matches(worldId, worldName, sceneName);
+        instancePrivacy ??= MetaPort.Instance.CurrentInstancePrivacy;
+        var validRules = PropConfigManager.Matches(worldId, worldName, sceneName, instancePrivacy);
         MelonLogger.Warning($"debug QueueProps validRules {validRules.Count}");
         foreach (var rule in validRules) {
             if (rule.PropSelectionRandom != null && rule.PropSelectionRandom.Value) {
                 var randomProp = rule.Props.PickRandom();
-                QueueProp(randomProp, 3);
+                QueueProp(randomProp, 0);
                 MelonLogger.Msg($"Added prop {randomProp} to queue");
             } else {
                 if (rule.Props.Count > PropLimitPerRule) {
@@ -82,12 +78,13 @@ public class PropSpawner : MelonMod {
                     continue;
                 }
                 foreach (var prop in rule.Props) {
-                    QueueProp(prop, 3);
+                    QueueProp(prop, 0);
                     MelonLogger.Msg($"Added prop {prop} to queue");
                 }
             }
         }
-        MelonLogger.Warning($"debug QueueProps end");
+        propSpawnQueueCount = propSpawnQueue.Count;
+        //MelonLogger.Warning($"debug QueueProps end");
     }
     //public static void SpawnProp(string propGuid, bool useTargetLocationGravity = false) => SpawnProp(propGuid, useTargetLocationGravity: useTargetLocationGravity);
     //public static void SpawnProp(string propGuid, Vector3? pos, bool useTargetLocationGravity = false) => SpawnProp(propGuid, pos: pos, useTargetLocationGravity: useTargetLocationGravity);
@@ -107,39 +104,28 @@ public class PropSpawner : MelonMod {
             ViewManager.Instance.NotifyUserAlert("(Local) Client", "Cannot spawn prop", "Props are disabled in content filter");
             return;
         }
-        if (MetaPort.Instance.settings.GetSettingsBool("HUDCustomizationPropSpawned", false)) {
-            ViewManager.Instance.NotifyUser("(Synced) Client", $"{propGuid} spawned", .5f);
-        }
-        MelonLogger.Warning("debug SpawnProp 1");
         pos ??= PlayerSetup.Instance.gameObject.transform.position;
-        MelonLogger.Warning("debug SpawnProp 2");
-        if (useTargetLocationGravity) {
-            MelonLogger.Warning("debug SpawnProp 3.1.1");
-            pos = GravitySystem.TryGetResultingGravity(pos.Value, false).AppliedGravity.normalized;
-            MelonLogger.Warning("debug SpawnProp 3.1.2");
-        } else {
-            MelonLogger.Warning("debug SpawnProp 3.2.1");
-            pos = BetterBetterCharacterController.Instance.GetGravityDirection();
-            MelonLogger.Warning("debug SpawnProp 3.2.2");
-        }
-        MelonLogger.Warning("debug SpawnProp 4");
+        //if (useTargetLocationGravity) { // Todo: Fix
+        //    pos = GravitySystem.TryGetResultingGravity(pos.Value, false).AppliedGravity.normalized;
+        //} else {
+        //    pos = BetterBetterCharacterController.Instance.GetGravityDirection();
+        //}
         rot ??= Quaternion.LookRotation(Vector3.ProjectOnPlane((PlayerSetup.Instance.CharacterController.RotationPivot.position - pos).Value.normalized, -pos.Value), -pos.Value);
-        MelonLogger.Warning("debug SpawnProp 5");
         MelonLogger.Msg($"Trying to spawn prop {propGuid} at {pos} with rotation {rot}");
         using (DarkRiftWriter darkRiftWriter = DarkRiftWriter.Create()) {
             darkRiftWriter.Write(propGuid);
             darkRiftWriter.Write(pos.Value.x);
             darkRiftWriter.Write(pos.Value.y);
             darkRiftWriter.Write(pos.Value.z);
-            darkRiftWriter.Write(rot.Value.eulerAngles.x);
-            darkRiftWriter.Write(rot.Value.eulerAngles.y);
-            darkRiftWriter.Write(rot.Value.eulerAngles.z);
+            darkRiftWriter.Write(rot.Value.x);
+            darkRiftWriter.Write(rot.Value.y);
+            darkRiftWriter.Write(rot.Value.z);
             darkRiftWriter.Write(1f);
             darkRiftWriter.Write(1f);
             darkRiftWriter.Write(1f);
             darkRiftWriter.Write(0f);
             using (Message message = Message.Create(10050, darkRiftWriter)) {
-                // NetworkManager.Instance.GameNetwork.SendMessage(message, SendMode.Reliable);
+                NetworkManager.Instance.GameNetwork.SendMessage(message, SendMode.Reliable);
             }
         }
     }

@@ -10,6 +10,7 @@ namespace Bluscream.PropSpawner;
 
 using System.Collections.Generic;
 using System.Globalization;
+using MelonLoader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -63,15 +64,16 @@ public partial class PropRule {
     }
 
     public bool Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
-        //MelonLogger.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
+        MelonLogger.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
         var worldMissing = WorldId is null && SceneName is null && WorldName is null && InstancePrivacy is null;
         //var worldWildcard = WorldId.Any(w => w == "*") && SceneName.Any(w => w == "*") && WorldName.Any(w => w == "*") && InstancePrivacy.Any(w => w == "*");
         var worldIdValid = WorldId != null && WorldId.Any(w => w == worldId);
         var worldNameValid = WorldName != null && WorldName.Any(w => w == worldName);
         var sceneNameValid = SceneName != null && SceneName.Any(s => s == sceneName);
-        //MelonLogger.Warning($"debug PropRule.Matches end  {worldMissing} {worldIdValid} {worldNameValid} {sceneNameValid}");
-        if (!worldMissing && !worldIdValid && !worldNameValid && !sceneNameValid) return false;
-        return true;
+        var instancePrivacyValid = InstancePrivacy != null && SceneName.Any(s => s == instancePrivacy);
+        MelonLogger.Warning($"debug PropRule.Matches end worldMissing={worldMissing} worldIdValid={worldIdValid} worldNameValid={worldNameValid} sceneNameValid={sceneNameValid} instancePrivacyValid={instancePrivacyValid}");
+        if (worldMissing || worldIdValid || worldNameValid || sceneNameValid || instancePrivacyValid) return true;
+        return false;
     }
 }
 
