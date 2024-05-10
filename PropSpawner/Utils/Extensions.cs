@@ -14,7 +14,7 @@ public static partial class Extensions {
     public static Vector3? ToVector3(this IList<float> floats) {
         var cnt = floats.Count();
         if (cnt != 3) {
-            MelonLogger.Warning($"Tried to convert list with {cnt} floats to Vector3!");
+            // MelonLogger.Warning($"Tried to convert list with {cnt} floats to Vector3!");
             return null;
         }
         return new Vector3(floats[0], floats[1], floats[2]);

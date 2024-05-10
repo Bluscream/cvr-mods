@@ -20,29 +20,35 @@ using Newtonsoft.Json.Converters;
 //}
 
 public partial class PropRule {
+    [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains a descriptive name for the rule
+    /// </summary>
+    public virtual string? Name { get; set; }
+
     [JsonProperty("worldId", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that contains the gid of the world where this rule will take effect
     /// </summary>
-    public virtual List<string> WorldId { get; set; }
+    public virtual string? WorldId { get; set; }
 
     [JsonProperty("worldName", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that contains the name of the world where this rule will take effect
     /// </summary>
-    public virtual List<string> WorldName { get; set; }
+    public virtual string? WorldName { get; set; }
 
     [JsonProperty("sceneName", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that contains the name of the unity scene where this rule will take effect
     /// </summary>
-    public virtual List<string> SceneName { get; set; }
+    public virtual string? SceneName { get; set; }
 
     [JsonProperty("instancePrivacy", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that contains the instance privacy where this rule will take effect
     /// </summary>
-    public virtual List<string> InstancePrivacy { get; set; }
+    public virtual string? InstancePrivacy { get; set; }
 
 
 
@@ -50,7 +56,7 @@ public partial class PropRule {
     /// <summary>
     /// Optional field that when set will force a random prop from the list to be selected everytime
     /// </summary>
-    internal virtual bool? PropSelectionRandom { get; set; }
+    internal virtual int? PropSelectionRandom { get; set; }
 
     [JsonProperty("props", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
@@ -59,19 +65,26 @@ public partial class PropRule {
     public virtual List<Prop> Props { get; set; }
 
     public override string ToString() {
-        var ruleMatch = WorldId ?? WorldName ?? SceneName ?? InstancePrivacy;
-        return $"PropRule \"{ruleMatch}\" ({Props.Count} props{(PropSelectionRandom.Value ? ", random" : "")})";
+        var ruleMatch = Name ?? WorldName ?? SceneName ?? WorldId ?? InstancePrivacy;
+        var msg = $"PropRule \"{ruleMatch}\" (";
+        if (PropSelectionRandom.HasValue && PropSelectionRandom.Value > 0) msg += $"{PropSelectionRandom.Value}/";
+        return msg += $"{Props.Count} props)";
+
     }
 
     public bool Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
-        MelonLogger.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
+        // MelonLogger.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
+        // MelonLogger.Warning($"debug PropRule.Matches rule {Name} {WorldId} {WorldName} {SceneName} {InstancePrivacy}");
         var worldMissing = WorldId is null && SceneName is null && WorldName is null && InstancePrivacy is null;
         //var worldWildcard = WorldId.Any(w => w == "*") && SceneName.Any(w => w == "*") && WorldName.Any(w => w == "*") && InstancePrivacy.Any(w => w == "*");
-        var worldIdValid = WorldId != null && WorldId.Any(w => w == worldId);
-        var worldNameValid = WorldName != null && WorldName.Any(w => w == worldName);
-        var sceneNameValid = SceneName != null && SceneName.Any(s => s == sceneName);
-        var instancePrivacyValid = InstancePrivacy != null && SceneName.Any(s => s == instancePrivacy);
-        MelonLogger.Warning($"debug PropRule.Matches end worldMissing={worldMissing} worldIdValid={worldIdValid} worldNameValid={worldNameValid} sceneNameValid={sceneNameValid} instancePrivacyValid={instancePrivacyValid}");
+        // MelonLogger.Warning($"debug PropRule.Matches worldId > rule={WorldId} request={worldId}");
+        var worldIdValid = WorldId != null && WorldId == worldId;
+        // MelonLogger.Warning($"debug PropRule.Matches worldName > rule={WorldName} request={worldName}");
+        var worldNameValid = WorldName != null && WorldName == worldName;
+        // MelonLogger.Warning($"debug PropRule.Matches sceneName > rule={SceneName} request={sceneName}");
+        var sceneNameValid = SceneName != null && SceneName == sceneName;
+        var instancePrivacyValid = InstancePrivacy != null && SceneName == instancePrivacy;
+        // MelonLogger.Warning($"debug PropRule.Matches end worldMissing={worldMissing} worldIdValid={worldIdValid} worldNameValid={worldNameValid} sceneNameValid={sceneNameValid} instancePrivacyValid={instancePrivacyValid}");
         if (worldMissing || worldIdValid || worldNameValid || sceneNameValid || instancePrivacyValid) return true;
         return false;
     }

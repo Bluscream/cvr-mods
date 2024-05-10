@@ -21,7 +21,7 @@ namespace Bluscream.PropSpawner {
             Rules.Clear();
             string[] jsonFiles = Directory.GetFiles(ConfigsDirectory, "*.json");
             if (jsonFiles.Length < 1) {
-                MelonLogger.Warning($"Could not find any prop configs in {ConfigsDirectory}, generating examples");
+                // MelonLogger.Warning($"Could not find any prop configs in {ConfigsDirectory}, generating examples");
                 GenerateExamples();
             } else {
                 MelonLogger.Msg($"Found {jsonFiles.Length} json files in {ConfigsDirectory}");
@@ -43,7 +43,7 @@ namespace Bluscream.PropSpawner {
             var results = new List<PropRule>();
             foreach (var rule in Rules) {
                 var matches = rule.Matches(worldId, worldName, sceneName, instancePrivacy);
-                MelonLogger.Warning($"debug List<PropRule> Matches {rule} matches {matches}");
+                // MelonLogger.Warning($"debug List<PropRule> Matches {rule} matches {matches}");
                 if (matches) results.Add(rule);
             }
             //MelonLogger.Warning($"debug PropConfigManager.Matches end {results.Count}");
@@ -52,7 +52,8 @@ namespace Bluscream.PropSpawner {
         internal static void GenerateExamples() {
             var exampleConfig = new List<PropRule> {
                     new PropRule() {
-                        PropSelectionRandom = true,
+                        Name = "Spawn a random NavMeshFollower when joining any world",
+                        PropSelectionRandom = 1,
                         Props = new List<Prop>() {
                             new Prop() { Id = "6cfe9b93-27d7-43dd-a0b5-63900c2872f2", Name = "[NMF] Awtter" },
                             new Prop() { Id = "d9f0d320-13c0-4a19-ba76-f85f04e9704b", Name = "[NMF] Rantichi" },
@@ -62,17 +63,18 @@ namespace Bluscream.PropSpawner {
                         }
                     },
                     new PropRule() {
-                        WorldId = new() {"406acf24-99b1-4119-8883-4fcda4250743"},
-                        SceneName = new() {"ThePurpleFoxV2"},
+                        WorldId = "406acf24-99b1-4119-8883-4fcda4250743",
+                        SceneName = "ThePurpleFoxV2",
                         Props = new List<Prop>() {
-                            new  Prop() { Id = "1f0aa960-e4ac-44fe-82f4-334eb4eb4959", Name = "Granny", Position = new() {483.75f,-4.36f,100.51f}, Rotation = new() { 0f,-0.7177276f,0f } },
-                            new  Prop() { Id = "16cb1cef-fc83-4ddb-8c98-007e2455d970", Name = "Smoking Room", Position = new() {-8.162736f,-2.499999f,3.811112f}, Rotation = new() { 0f,0.9999966f,0f } },
+                            new  Prop() { Id = "1f0aa960-e4ac-44fe-82f4-334eb4eb4959", Name = "Granny", Position = new() {483.75f,-4.36f,100.51f}, Rotation = new() { 0f,-0.2f,0f } },
+                            new  Prop() { Id = "16cb1cef-fc83-4ddb-8c98-007e2455d970", Name = "Smoking Room", Position = new() {-8.162736f,-2.499999f,3.811112f}, Rotation = new() { 0f,0.45f,0f } },
                         }
                     },
                     new PropRule() {
-                        WorldId = new() {"406acf24-99b1-4119-8883-4fcda4250743"},
-                        WorldName = new() {"Forge World"},
-                        SceneName = new() {"Forge World"},
+                        Name = "Let the grannies rule ✊",
+                        WorldId = "6ae87c55-7159-4829-b94a-484fe030c766",
+                        WorldName = "Forge World",
+                        SceneName = "Forge World",
                         Props = new List<Prop>() {
                             new  Prop() { Id = "1f0aa960-e4ac-44fe-82f4-334eb4eb4959", Name = "Granny", Position = new() { -169.4302f, 122.4796f, -652.9823f } },
                             new  Prop() { Id = "1f0aa960-e4ac-44fe-82f4-334eb4eb4959", Name = "Granny", Position = new() { -171.3268f, 122.4796f, -652.9365f } },
@@ -81,9 +83,10 @@ namespace Bluscream.PropSpawner {
                     }
                 };
             exampleConfig.ToFile(Path.Combine(ConfigsDirectory, ExampleFileName));
+            LoadConfigs();
         }
         //internal static void SaveProp(string propId, Vector3? position = null, 
-        internal static void SaveProp(Prop prop, string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
+        internal static void SaveProp(Prop prop, string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null, bool reloadAfterSave = true) {
             //MelonLogger.Warning("debug PropConfigManager.SaveProp start");
             var jsonFile = Path.Combine(ConfigsDirectory, SavedPropsFileName);
             var cfg = new List<PropRule>();
@@ -106,15 +109,16 @@ namespace Bluscream.PropSpawner {
             }
             if (!matched) {
                 var rule = new PropRule() {
-                    WorldId = new() { worldId },
-                    WorldName = new() { worldName },
-                    SceneName = new() { sceneName },
+                    WorldId = worldId,
+                    WorldName = worldName,
+                    SceneName = sceneName,
                     Props = new() { prop }
                 };
                 cfg.Add(rule);
             }
             cfg.ToFile(jsonFile);
-            MelonLogger.Warning("debug PropConfigManager.SaveProp end");
+            if (reloadAfterSave) LoadConfigs();
+            // MelonLogger.Warning("debug PropConfigManager.SaveProp end");
         }
     }
 }
