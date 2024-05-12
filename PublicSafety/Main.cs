@@ -30,7 +30,8 @@ public class PublicSafety : MelonMod {
 
         CVRGameEventSystem.Instance.OnConnected.AddListener(instance => {
             if (!ModConfig.EnableMod.Value) return;
-            Task.Factory.StartNew(() => CommonMethods.SetSettings(instance));
+            //Task.Factory.StartNew(() => CommonMethods.SetSettings(instance));
+            CommonMethods.SetSettings(instance);
         });
     }
 
