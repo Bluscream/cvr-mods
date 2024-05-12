@@ -15,8 +15,8 @@ using HarmonyLib;
 namespace Bluscream.PropSpawner;
 
 public class PropSpawner : MelonMod {
-    private protected const ushort PropLimitPerRule = 3;
-    private protected const ushort PropLimitGame = 20;
+    private protected const ushort PropLimitRule = 5;
+    private protected const ushort PropLimitTotal = 10;
     private Queue<Prop> propSpawnQueue = new();
     private int propSpawnQueueCount = 0;
     public override void OnInitializeMelon() {
@@ -40,12 +40,12 @@ public class PropSpawner : MelonMod {
         }
         if (prop is null) return;
         if (prop.Position != null) {
-            var p = prop.Position.ToVector3();
+            var pos = prop.Position.ToVector3();
             if (prop.Rotation != null) {
-                var r = prop.Rotation.ToQuaternion();
-                SpawnProp(prop.Id, p, r, useTargetLocationGravity: false);
+                var rot = prop.Rotation.ToQuaternion();
+                SpawnProp(prop.Id, pos, rot, useTargetLocationGravity: false);
             } else {
-                SpawnProp(prop.Id, p, useTargetLocationGravity: false);
+                SpawnProp(prop.Id, pos, useTargetLocationGravity: false);
             }
         } else {
             SpawnProp(prop.Id, useTargetLocationGravity: false); // PlayerSetup.Instance.SpawnProp(prop.Id, PlayerSetup.Instance.gameObject.transform.position);
@@ -80,8 +80,8 @@ public class PropSpawner : MelonMod {
                     //MelonLogger.Msg($"Added prop {randomProp} to queue");
                 }
             } else {
-                if (rule.Props.Count > PropLimitPerRule) {
-                    MelonLogger.Warning($"Exceeded prop autospawn limit of {PropLimitPerRule}, can't continue");
+                if (rule.Props.Count > PropLimitRule) {
+                    MelonLogger.Warning($"Exceeded prop autospawn rule limit of {PropLimitRule}, can't continue");
                     continue;
                 }
                 foreach (var prop in rule.Props) {
@@ -91,8 +91,8 @@ public class PropSpawner : MelonMod {
             }
         }
         propSpawnQueueCount = propSpawnQueue.Count;
-        if (propSpawnQueueCount > PropLimitGame) {
-            MelonLogger.BigError("PropSpawner", $"You have more props in queue than the game allows ({propSpawnQueueCount}/{PropLimitGame})");
+        if (propSpawnQueueCount > PropLimitTotal) {
+            MelonLogger.BigError("PropSpawner", $"You have more props in queue than the mod allows ({propSpawnQueueCount}/{PropLimitTotal})");
             propSpawnQueue.Clear();
             propSpawnQueueCount = 0;
             return;

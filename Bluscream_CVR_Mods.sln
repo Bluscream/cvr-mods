@@ -7,8 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationLog", "Notifica
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BC51CB36-B1D3-4631-8F8E-7EF9731682F3}"
 	ProjectSection(SolutionItems) = preProject
-		NotificationLog\Properties\CVRMG.json = NotificationLog\Properties\CVRMG.json
 		README.md = README.md
+		NotificationLog\README.md = NotificationLog\README.md
+		PropSpawner\README.md = PropSpawner\README.md
+		PublicSafety\README.md = PublicSafety\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicSafety", "PublicSafety\PublicSafety.csproj", "{0A2170D9-1073-4800-8B0B-CD40BFDFE5A0}"
