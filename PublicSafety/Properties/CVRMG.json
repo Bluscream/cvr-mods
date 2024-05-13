@@ -6,7 +6,7 @@
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple `Mod` that logs allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
+	"description": "Simple `Mod` that allows you to auto-set certain settings like\n\n- URL Whitelist\n- Advanced Safety\n- Discord/Steam Rich Presence\n\nwhen you join public instances\n\nIf you have recommendations on other settings that should be included, leave them on [Github](https://github.com/Bluscream/cvr-mods/issues/new) or [Discord](https://discord.com/users/467777925790564352) \n\n",
 	"searchtags": [
 		"safety",
 		"security",
