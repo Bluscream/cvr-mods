@@ -1,12 +1,12 @@
 {
-	"_id": -1,
+	"_id": 206,
 	"name": "PublicSafety",
 	"modversion": "1.0.0",
 	"gameversion": "2024r175",
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple `Mod` that allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
+	"description": "Simple `Mod` that logs allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
 	"searchtags": [
 		"safety",
 		"security",

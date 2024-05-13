@@ -1,0 +1,62 @@
+[
+  {
+    "_id": 204,
+    "name": "NotificationLog",
+    "modversion": "1.0.0",
+    "gameversion": "2024r175",
+    "loaderversion": "v0.6.1",
+    "modtype": "Mod",
+    "author": "Bluscream",
+    "description": "Simple `Mod` that logs HUD Notifications to your MelonLoader console and log\n\n",
+    "searchtags": [
+      "logger",
+      "log",
+      "hud"
+    ],
+    "requirements": [],
+    "downloadlink": "https://api.cvrmg.com/v1/mods/files/204/1/NotificationLog.dll",
+    "sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/NotificationLog",
+    "changelog": "- Initial release.",
+    "embedcolor": "16C60C"
+  },
+  {
+    "_id": 206,
+    "name": "PublicSafety",
+    "modversion": "1.0.0",
+    "gameversion": "2024r175",
+    "loaderversion": "v0.6.1",
+    "modtype": "Mod",
+    "author": "Bluscream",
+    "description": "Simple `Mod` that logs allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
+    "searchtags": [
+      "safety",
+      "security",
+      "automation"
+    ],
+    "requirements": [],
+    "downloadlink": "https://api.cvrmg.com/v1/mods/files/206/1/PublicSafety.dll",
+    "sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PublicSafety",
+    "changelog": "- Initial release.",
+    "embedcolor": "16C60C"
+  },
+  {
+    "_id": 207,
+    "name": "PropSpawner",
+    "modversion": "1.0.0",
+    "gameversion": "2024r175",
+    "loaderversion": "v0.6.1",
+    "modtype": "Mod",
+    "author": "Bluscream",
+    "description": "Slightly less simple `Mod` that allows you to auto-spawn certain props when you join a instance\n\nCheck the [Github Readme](https://github.com/Bluscream/cvr-mods/blob/master/PublicSafety/README.md) for more infos.\n\n",
+    "searchtags": [
+      "automation",
+      "prop",
+      "props"
+    ],
+    "requirements": [],
+    "downloadlink": "https://api.cvrmg.com/v1/mods/files/207/1/PropSpawner.dll",
+    "sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PropSpawner",
+    "changelog": "- Initial release.",
+    "embedcolor": "16C60C"
+  }
+]

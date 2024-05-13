@@ -31,12 +31,12 @@ public class PublicSafety : MelonMod {
         CVRGameEventSystem.Instance.OnConnected.AddListener(instance => {
             if (!ModConfig.EnableMod.Value) return;
             //Task.Factory.StartNew(() => CommonMethods.SetSettings(instance));
-            CommonMethods.SetSettings(instance);
+            CommonMethods.SetSettings();
         });
     }
 
     internal static class CommonMethods {
-        internal static void SetSettings(string? instanceId = null, Instances.InstancePrivacyType? instancePrivacyType = null) {
+        internal static void SetSettings(Instances.InstancePrivacyType? instancePrivacyType = null) {
             if (!ModConfig.EnableMod.Value) return;
             instancePrivacyType ??= GetPrivacy(MetaPort.Instance.CurrentInstancePrivacy);
             var scene = SceneManager.GetActiveScene().name;

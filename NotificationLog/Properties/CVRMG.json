@@ -1,12 +1,12 @@
 {
-	"_id": -1,
+	"_id": 204,
 	"name": "NotificationLog",
-	"modversion": "1.0.0",
+	"modversion": "1.0.1",
 	"gameversion": "2024r175",
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple `Mod` that logs HUD Notifications to your MelonLoader console and log\n\n",
+	"description": "Simple highly customizable `Mod` that logs\n\n- HUD Notifications\n- Instance Joins\n- Player joins\n- Player leaves\n- Prop Spawns\n\nto your MelonLoader console and log\n\n",
 	"searchtags": [
 		"logger",
 		"log",
