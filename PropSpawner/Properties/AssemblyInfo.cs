@@ -22,8 +22,8 @@ using MelonLoader;
 [assembly: MelonPlatform(MelonPlatformAttribute.CompatiblePlatforms.WINDOWS_X64)]
 [assembly: MelonPlatformDomain(MelonPlatformDomainAttribute.CompatibleDomains.MONO)]
 [assembly: VerifyLoaderVersion(0, 6, 1, true)]
-[assembly: MelonColor(255, 169, 169, 169)]
-[assembly: MelonAuthorColor(255, 119, 77, 79)]
+[assembly: MelonColor(200, 255, 255, 255)]
+[assembly: MelonAuthorColor(255, 0, 108, 255)]
 
 namespace Bluscream.PropSpawner.Properties;
 internal static class AssemblyInfoParams {
