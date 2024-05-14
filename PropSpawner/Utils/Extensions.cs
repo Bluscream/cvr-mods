@@ -27,6 +27,12 @@ public static partial class Extensions {
             default: MelonLogger.Warning($"Tried to convert list with {cnt} floats to Quaternion!"); return null;
         }
     }
+    public static List<float> ToList(this Vector3 vec) {
+        return vec != null ? new List<float>() { vec.x, vec.y, vec.z } : new List<float>();
+    }
+    public static List<float> ToList(this Quaternion quat) {
+        return quat != null ? new List<float>() { quat.x, quat.y, quat.z, quat.w } : new List<float>();
+    }
     public static string ToString(this IList<float>? floats) {
         return floats != null ? string.Join(", ", floats) : string.Empty;
     }

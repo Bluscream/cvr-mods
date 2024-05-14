@@ -18,6 +18,7 @@ using MelonLoader;
     AssemblyInfoParams.Author,
     downloadLink: "https://github.com/Bluscream/cvr-mods"
 )]
+[assembly: MelonAdditionalCredits("kafeijao")]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonPlatform(MelonPlatformAttribute.CompatiblePlatforms.WINDOWS_X64)]
 [assembly: MelonPlatformDomain(MelonPlatformDomainAttribute.CompatibleDomains.MONO)]

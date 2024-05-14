@@ -17,7 +17,9 @@
 ## MelonPrefs
 | Preference Name | Type | Description | Default Value |
 |-----------------|------|-------------|---------------|
-| EnableMod       | bool | The mod will do nothing while disabled | `true` |
+| EnableMod | bool | The mod will do nothing while disabled | `true` 
+| AutoSaveSpawnedProps | bool | Will automatically save all manually spawned props to "PropConfigs/SavedProps.json" while enabled | `false` |
+| AutoSpawnDelay | bool | Time delay before spawning saved props after joining an instance. | `1 second` |
 
 ## Example Config File
 ```
