@@ -6,47 +6,56 @@ namespace Bluscream.PropSpawner {
     internal class PropConfigManager {
         internal protected const string ExampleFileName = "example.json";
         internal protected const string SavedPropsFileName = "Saved Props.json";
-        internal static protected readonly string ConfigsDirectory = Path.Combine(MelonLoader.Utils.MelonEnvironment.UserDataDirectory, "PropConfigs");
+        internal static protected readonly DirectoryInfo ConfigsDirectory = new DirectoryInfo(MelonLoader.Utils.MelonEnvironment.UserDataDirectory).Combine("PropConfigs");
         internal static List<PropRule> Rules = new();
 
         internal static void Initialize() {
-            MelonLogger.Msg($"Initializing PropConfigManager for {ConfigsDirectory}");
-            if (!Directory.Exists(ConfigsDirectory)) {
-                MelonLogger.Msg($"{ConfigsDirectory} does not exist, creating it now...");
-                Directory.CreateDirectory(ConfigsDirectory);
+            Utils.Log($"Initializing PropConfigManager for {ConfigsDirectory.str()}");
+            if (!ConfigsDirectory.Exists) {
+                Utils.Log($"{ConfigsDirectory.str()} does not exist, creating it now...");
+                ConfigsDirectory.Create();
             }
             LoadConfigs();
         }
         internal static void LoadConfigs() {
             Rules.Clear();
-            string[] jsonFiles = Directory.GetFiles(ConfigsDirectory, "*.json");
+            var jsonFiles = ConfigsDirectory.GetFiles("*.json");
             if (jsonFiles.Length < 1) {
-                // MelonLogger.Warning($"Could not find any prop configs in {ConfigsDirectory}, generating examples");
+                // Utils.Warning($"Could not find any prop configs in {ConfigsDirectory}, generating examples");
                 GenerateExamples();
             } else {
-                MelonLogger.Msg($"Found {jsonFiles.Length} json files in {ConfigsDirectory}");
-                foreach (string jsonFile in jsonFiles) {
-                    MelonLogger.Msg($"Processing file: {jsonFile}");
+                Utils.Log($"Found {jsonFiles.Length} json files in {ConfigsDirectory.str()}");
+                foreach (var jsonFile in jsonFiles) {
+                    if (!jsonFile.Exists) continue;
+                    Utils.Log($"Processing file: {jsonFile.str()}");
                     try {
                         var cfg = PropConfig.FromFile(jsonFile);
-                        MelonLogger.Msg($"Loaded {cfg.Count} rules from {jsonFile}");
-                        Rules.AddRange(cfg);
+                        foreach (var rule in cfg) {
+                            try {
+                                rule.File = jsonFile;
+                                Rules.Add(rule);
+                            } catch (Exception ex) {
+                                Utils.Error($"Failed to load rule {rule}: {ex.Message}");
+                            }
+                        }
+                        Utils.Log($"Loaded {cfg.Count} rules from {jsonFile.str()}");
                     } catch (Exception ex) {
-                        MelonLogger.Error($"Failed to load {jsonFile}: {ex.Message}");
+                        Utils.Error($"Failed to load file {jsonFile.str()}: {ex.Message}");
                     }
                 }
-                MelonLogger.Msg($"Loaded {Rules.Count} rules from {jsonFiles.Length} config files.");
+                Utils.Log($"Loaded {Rules.Count} rules from {jsonFiles.Length} config files.");
             }
         }
+        internal static List<PropRule> GetRulesByFile(FileInfo file) => Rules.Where(r => r.File == file).ToList();
         internal static List<PropRule> Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
-            //MelonLogger.Warning("debug PropConfigManager.Matches start");
+            //Utils.Warning("debug PropConfigManager.Matches start");
             var results = new List<PropRule>();
             foreach (var rule in Rules) {
                 var matches = rule.Matches(worldId, worldName, sceneName, instancePrivacy);
-                // MelonLogger.Warning($"debug List<PropRule> Matches {rule} matches {matches}");
+                // Utils.Warning($"debug List<PropRule> Matches {rule} matches {matches}");
                 if (matches) results.Add(rule);
             }
-            //MelonLogger.Warning($"debug PropConfigManager.Matches end {results.Count}");
+            //Utils.Warning($"debug PropConfigManager.Matches end {results.Count}");
             return results;
         }
         internal static void GenerateExamples() {
@@ -82,21 +91,21 @@ namespace Bluscream.PropSpawner {
                         }
                     }
                 };
-            exampleConfig.ToFile(Path.Combine(ConfigsDirectory, ExampleFileName));
+            exampleConfig.ToFile(ConfigsDirectory.CombineFile(ExampleFileName));
             LoadConfigs();
         }
         //internal static void SaveProp(string propId, Vector3? position = null, 
         internal static void SaveProp(Prop prop, string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null, bool reloadAfterSave = true) {
-            //MelonLogger.Warning("debug PropConfigManager.SaveProp start");
-            var jsonFile = Path.Combine(ConfigsDirectory, SavedPropsFileName);
+            //Utils.Warning("debug PropConfigManager.SaveProp start");
+            var jsonFile = ConfigsDirectory.CombineFile(SavedPropsFileName);
             var cfg = new List<PropRule>();
-            if (File.Exists(jsonFile)) {
+            if (jsonFile.Exists) {
                 try {
                     cfg = PropConfig.FromFile(jsonFile);
-                    MelonLogger.Msg($"Loaded {cfg.Count} rules from {jsonFile}");
+                    Utils.Log($"Loaded {cfg.Count} rules from {jsonFile.str()}");
                 } catch (Exception ex) {
-                    MelonLogger.Error($"Failed to load {jsonFile}: {ex.Message}");
-                    File.Copy(jsonFile, jsonFile + ".broken", true);
+                    Utils.Error($"Failed to load {jsonFile.str()}: {ex.Message}");
+                    jsonFile.CopyTo(jsonFile + ".broken", true);
                 }
             }
             var matched = false;
@@ -118,7 +127,7 @@ namespace Bluscream.PropSpawner {
             }
             cfg.ToFile(jsonFile);
             if (reloadAfterSave) LoadConfigs();
-            // MelonLogger.Warning("debug PropConfigManager.SaveProp end");
+            // Utils.Warning("debug PropConfigManager.SaveProp end");
         }
     }
 }

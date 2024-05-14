@@ -20,6 +20,12 @@ using Newtonsoft.Json.Converters;
 //}
 
 public partial class PropRule {
+    [JsonIgnore]
+    /// <summary>
+    /// Path of the json file the rule came from or belongs to
+    /// </summary>
+    public virtual FileInfo File { get; set; }
+
     [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that contains a descriptive name for the rule
@@ -66,25 +72,25 @@ public partial class PropRule {
 
     public override string ToString() {
         var ruleMatch = Name ?? WorldName ?? SceneName ?? WorldId ?? InstancePrivacy;
-        var msg = $"PropRule \"{ruleMatch}\" (";
+        var msg = $"PropRule \"{File.Name}\" > \"{ruleMatch}\" (";
         if (PropSelectionRandom.HasValue && PropSelectionRandom.Value > 0) msg += $"{PropSelectionRandom.Value}/";
         return msg += $"{Props.Count} props)";
 
     }
 
     public bool Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
-        // MelonLogger.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
-        // MelonLogger.Warning($"debug PropRule.Matches rule {Name} {WorldId} {WorldName} {SceneName} {InstancePrivacy}");
+        // Utils.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
+        // Utils.Warning($"debug PropRule.Matches rule {Name} {WorldId} {WorldName} {SceneName} {InstancePrivacy}");
         var worldMissing = WorldId is null && SceneName is null && WorldName is null && InstancePrivacy is null;
         //var worldWildcard = WorldId.Any(w => w == "*") && SceneName.Any(w => w == "*") && WorldName.Any(w => w == "*") && InstancePrivacy.Any(w => w == "*");
-        // MelonLogger.Warning($"debug PropRule.Matches worldId > rule={WorldId} request={worldId}");
+        // Utils.Warning($"debug PropRule.Matches worldId > rule={WorldId} request={worldId}");
         var worldIdValid = WorldId != null && WorldId == worldId;
-        // MelonLogger.Warning($"debug PropRule.Matches worldName > rule={WorldName} request={worldName}");
+        // Utils.Warning($"debug PropRule.Matches worldName > rule={WorldName} request={worldName}");
         var worldNameValid = WorldName != null && WorldName == worldName;
-        // MelonLogger.Warning($"debug PropRule.Matches sceneName > rule={SceneName} request={sceneName}");
+        // Utils.Warning($"debug PropRule.Matches sceneName > rule={SceneName} request={sceneName}");
         var sceneNameValid = SceneName != null && SceneName == sceneName;
         var instancePrivacyValid = InstancePrivacy != null && SceneName == instancePrivacy;
-        // MelonLogger.Warning($"debug PropRule.Matches end worldMissing={worldMissing} worldIdValid={worldIdValid} worldNameValid={worldNameValid} sceneNameValid={sceneNameValid} instancePrivacyValid={instancePrivacyValid}");
+        // Utils.Warning($"debug PropRule.Matches end worldMissing={worldMissing} worldIdValid={worldIdValid} worldNameValid={worldNameValid} sceneNameValid={sceneNameValid} instancePrivacyValid={instancePrivacyValid}");
         if (worldMissing || worldIdValid || worldNameValid || sceneNameValid || instancePrivacyValid) return true;
         return false;
     }
@@ -121,12 +127,14 @@ public partial class Prop {
 }
 
 public partial class PropConfig {
+    public static List<PropRule> FromFile(FileInfo file) => FromFile(file.FullName);
     public static List<PropRule> FromFile(string filePath) => FromJson(File.ReadAllText(filePath));
     public static List<PropRule> FromJson(string json) => JsonConvert.DeserializeObject<List<PropRule>>(json, Bluscream.PropSpawner.Converter.Settings);
 }
 
 public static class Serialize {
     public static string ToJson(this List<PropRule> self) => JsonConvert.SerializeObject(self, Bluscream.PropSpawner.Converter.Settings);
+    public static void ToFile(this List<PropRule> self, FileInfo file) => ToFile(self, file.FullName);
     public static void ToFile(this List<PropRule> self, string filePath) => File.WriteAllText(filePath, self.ToJson());
 }
 

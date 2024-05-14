@@ -187,7 +187,7 @@ internal class HarmonyPatches {
                 MetaPort.Instance.CurrentInstancePrivacy
             );
         } catch (Exception e) {
-            MelonLogger.Error(e);
+            Utils.Error(e);
         }
     }
 }
