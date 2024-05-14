@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicSafety", "PublicSafet
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropSpawner", "PropSpawner\PropSpawner.csproj", "{D928C266-2F2A-40C6-8428-84CBC36387A1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BTKUILib", "..\BTKUILib\BTKUILib.csproj", "{3C2C947A-6522-4A4F-B6FA-755A5293817D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{D928C266-2F2A-40C6-8428-84CBC36387A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D928C266-2F2A-40C6-8428-84CBC36387A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D928C266-2F2A-40C6-8428-84CBC36387A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

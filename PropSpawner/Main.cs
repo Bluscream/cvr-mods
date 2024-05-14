@@ -22,6 +22,7 @@ public class PropSpawner : MelonMod {
     public override void OnInitializeMelon() {
         ModConfig.InitializeMelonPrefs();
         PropConfigManager.Initialize();
+        UI.BTK.Initialize();
 
         object spawning = null;
         #region events

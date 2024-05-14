@@ -18,34 +18,46 @@ namespace Bluscream.PropSpawner {
             LoadConfigs();
         }
         internal static void LoadConfigs() {
-            Rules.Clear();
-            var jsonFiles = ConfigsDirectory.GetFiles("*.json");
-            if (jsonFiles.Length < 1) {
-                // Utils.Warning($"Could not find any prop configs in {ConfigsDirectory}, generating examples");
+            var cfgFiles = GetValidConfigFiles();
+            if (cfgFiles.Count < 1) {
+                Utils.Warn($"Could not find any prop configs in {ConfigsDirectory.str()}, generating examples");
                 GenerateExamples();
             } else {
-                Utils.Log($"Found {jsonFiles.Length} json files in {ConfigsDirectory.str()}");
-                foreach (var jsonFile in jsonFiles) {
-                    if (!jsonFile.Exists) continue;
-                    Utils.Log($"Processing file: {jsonFile.str()}");
-                    try {
-                        var cfg = PropConfig.FromFile(jsonFile);
-                        foreach (var rule in cfg) {
-                            try {
-                                rule.File = jsonFile;
-                                Rules.Add(rule);
-                            } catch (Exception ex) {
-                                Utils.Error($"Failed to load rule {rule}: {ex.Message}");
-                            }
+                Utils.Log($"Found {cfgFiles.Count} json files in {ConfigsDirectory.str()}");
+                Rules.Clear();
+                foreach (var (file, rules) in cfgFiles) {
+                    if (!file.Exists) continue;
+                    Utils.Log($"Processing file: {file.str()}");
+                    foreach (var rule in rules) {
+                        try {
+                            rule.File = file;
+                            Rules.Add(rule);
+                        } catch (Exception ex) {
+                            Utils.Error($"Failed to load rule {rule}: {ex.Message}");
                         }
-                        Utils.Log($"Loaded {cfg.Count} rules from {jsonFile.str()}");
-                    } catch (Exception ex) {
-                        Utils.Error($"Failed to load file {jsonFile.str()}: {ex.Message}");
                     }
+                    Utils.Log($"Loaded {rules.Count} rules from {file.str()}");
                 }
-                Utils.Log($"Loaded {Rules.Count} rules from {jsonFiles.Length} config files.");
+                Utils.Log($"Loaded {Rules.Count} rules from {cfgFiles.Count} config files.");
             }
         }
+        internal static Dictionary<FileInfo, List<PropRule>> GetValidConfigFiles() {
+            var ret = new Dictionary<FileInfo, List<PropRule>>();
+            var jsonFiles = ConfigsDirectory.GetFiles("*.json");
+            foreach (var jsonFile in jsonFiles) {
+                if (!jsonFile.Exists) continue;
+                Utils.Log($"Processing file: {jsonFile.str()}");
+                try {
+                    var cfg = PropConfig.FromFile(jsonFile);
+                    ret.Add(jsonFile, cfg);
+                } catch (Exception ex) {
+                    Utils.Error($"Failed to load file {jsonFile.str()}: {ex.Message}");
+                }
+            }
+            Utils.Log($"Loaded {Rules.Count} rules from {jsonFiles.Length} config files.");
+            return ret;
+        }
+        internal static HashSet<FileInfo> GetFilesFromRules() => Rules.Select(r => r.File).ToHashSet();
         internal static List<PropRule> GetRulesByFile(FileInfo file) => Rules.Where(r => r.File == file).ToList();
         internal static List<PropRule> Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
             //Utils.Warning("debug PropConfigManager.Matches start");
