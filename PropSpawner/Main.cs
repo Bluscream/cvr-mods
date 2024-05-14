@@ -29,8 +29,11 @@ public class PropSpawner : MelonMod {
             if (!Utils.PropsAllowed()) return; // Handle can't spawn notification
             //Utils.Debug("CVRGameEventSystem.Instance.OnConnected start");
             if (spawning != null) MelonCoroutines.Stop(spawning); // Cancel previous
-            spawning = MelonCoroutines.Start(DelaySpawnProps(instanceId)); // Start the spawning coroutine
-            //Task.Factory.StartNew(() => DelaySpawnProps(MetaPort.Instance.CurrentInstanceId));
+            if (ModConfig.UseAsyncTask.Value) {
+                Task.Factory.StartNew(() => QueueProps(instanceId));
+            } else {
+                spawning = MelonCoroutines.Start(DelaySpawnProps(instanceId)); // Start the spawning coroutine
+            }
             //Utils.Debug("CVRGameEventSystem.Instance.OnConnected end");
         });
     }

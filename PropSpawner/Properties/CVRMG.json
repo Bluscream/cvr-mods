@@ -15,6 +15,6 @@
 	"requirements": [],
 	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F14%2F2024/PropSpawner.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PropSpawner",
-	"changelog": "- Initial release.\n- Added AutoSpawnDelay to mod settings (min 1 second)",
+	"changelog": "- Initial release.",
 	"embedcolor": "006CFF"
 }
