@@ -9,12 +9,12 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<bool> EnableLogging;
     internal static MelonPreferences_Entry<bool> EnableHUDNotifications;
 
-    internal static MelonPreferences_Entry<bool> UseAsyncTask;
-
     internal static MelonPreferences_Entry<bool> AutoSaveSpawnedProps;
 
     private static readonly int _MinSpawnDelay = 1;
     internal static MelonPreferences_Entry<int> AutoSpawnDelay;
+
+    internal static MelonPreferences_Entry<bool> UseAsyncTask;
 
 
     public static void InitializeMelonPrefs() {
@@ -26,9 +26,6 @@ public static class ModConfig {
         EnableHUDNotifications = _melonCategory.CreateEntry("Enable HUD Notifications", true,
             description: "The mod will show no HUD notifications while this is disabled");
 
-        UseAsyncTask = _melonCategory.CreateEntry("Use Async Task ⚠️", false,
-            description: "Creates an additional safeguard by using TaskFactory for the spawning (Only enable if you have stability issues! / Bypasses AutoSpawnDelay)");
-
         AutoSaveSpawnedProps = _melonCategory.CreateEntry("Auto Save Spawned Props", false,
             description: $"Will automatically save all manually spawned props to \"{PropConfigManager.SavedPropsFileName}\" while enabled");
 
@@ -38,5 +35,8 @@ public static class ModConfig {
             Utils.Warn($"AutoSpawnDelay is below {_MinSpawnDelay}s! Resetting to default {AutoSpawnDelay.DefaultValue}s");
             AutoSpawnDelay.Value = AutoSpawnDelay.DefaultValue;
         }
+
+        UseAsyncTask = _melonCategory.CreateEntry("⚠️ Use Async Task", false,
+            description: "Creates an additional safeguard by using TaskFactory for the spawning (Only enable if you have stability issues! / Bypasses AutoSpawnDelay)");
     }
 }

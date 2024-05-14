@@ -15,11 +15,15 @@
 - Restart your game to apply your changes
 
 ## MelonPrefs
-| Preference Name | Type | Description | Default Value |
-|-----------------|------|-------------|---------------|
-| EnableMod | bool | The mod will do nothing while disabled | `true` 
-| AutoSaveSpawnedProps | bool | Will automatically save all manually spawned props to "PropConfigs/SavedProps.json" while enabled | `false` |
-| AutoSpawnDelay | bool | Time delay before spawning saved props after joining an instance. | `1 second` |
+| Internal Name | Preference Name | Type | Description | Default Value |
+|---|-----------------|------|-------------|---------------|
+| EnableMod | Enable Mod | bool | The mod will do nothing while this is disabled | `true` |
+| EnableLogging | Enable Logging | bool | The mod will write nothing to the MelonLoader Console/Logfile while this is disabled | `true` |
+| EnableHUDNotifications | Enable HUD Notifications | bool | The mod will show no HUD notifications while this is disabled | `true` |
+| AutoSaveSpawnedProps | Auto Save Spawned Props | bool | Will automatically save all manually spawned props to "UserData/PropConfigs/SavedProps.json" while enabled | `false` |
+| AutoSpawnDelay | Spawn Delay (Seconds) | int | Time in seconds before spawning saved props after joining an instance. | `3` |
+| UseAsyncTask | ⚠️ Use Async Task | bool | Creates an additional safeguard by using TaskFactory for the spawning (Only enable if you have stability issues / Bypasses AutoSpawnDelay) | `false` |
+
 
 ## Example Config File
 ```
