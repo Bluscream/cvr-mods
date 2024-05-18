@@ -17,8 +17,8 @@ namespace Bluscream.PropSpawner;
 public class PropSpawner : MelonMod {
     private protected const ushort PropLimitRule = 5;
     private protected const ushort PropLimitTotal = 10;
-    private Queue<Prop> propSpawnQueue = new();
-    private int propSpawnQueueCount = 0;
+    private static Queue<Prop> propSpawnQueue = new();
+    private static int propSpawnQueueCount = 0;
     public override void OnInitializeMelon() {
         ModConfig.InitializeMelonPrefs();
         PropConfigManager.Initialize();
@@ -95,7 +95,7 @@ public class PropSpawner : MelonMod {
             }
         }
     }
-    internal void QueueProp(Prop prop, int delay = 1) {
+    internal static void QueueProp(Prop prop, int delay = 1) {
         if (!ModConfig.EnableMod.Value) return;
         //Utils.Warning("debug QueueProp start");
         propSpawnQueue.Enqueue(prop);
@@ -104,7 +104,7 @@ public class PropSpawner : MelonMod {
         }
         //Utils.Debug("QueueProp end");
     }
-    internal void QueueProps(string? worldId = null, string? worldName = null, string? sceneName = null, string? instancePrivacy = null) {
+    internal static void QueueProps(string? worldId = null, string? worldName = null, string? sceneName = null, string? instancePrivacy = null) {
         if (!ModConfig.EnableMod.Value) return;
         //Utils.Debug($"QueueProps start");
         worldId ??= MetaPort.Instance.CurrentWorldId;

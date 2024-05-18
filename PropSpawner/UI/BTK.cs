@@ -2,7 +2,17 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using ABI_RC.Core.InteractionSystem;
 using BTKUILib.UIObjects;
+using MelonLoader;
+using BTKUILib.UIObjects.Components;
+using Photon.Realtime;
+using FMOD;
+using Shapes;
+using static ABI_RC.Core.EventSystem.AssetManagement;
+using static ABI_RC.Core.Util.CVRSyncHelper;
+using static MelonLoader.ModPrefs;
+using static Mono.Security.X509.X520;
 
 namespace Bluscream.PropSpawner.UI;
 internal class BTK {
@@ -13,95 +23,96 @@ internal class BTK {
         public void Invoke() => m_action?.Invoke();
     }
 
-    enum UiIndex {
-        Hotkey = 0
-    }
-
     internal static readonly UiEvent OnSwitchChanged = new UiEvent();
 
-    static List<object> ms_uiElements = null;
+    static Page MainPage, RulesPage, RuleDetailsPage = null;
 
     internal static void Initialize() {
-        ms_uiElements = new List<object>();
+        var mods = MelonMod.RegisteredMelons;
+        if (mods.FirstOrDefault(m => m.Info.Name == "BTKUILib") is null) {
+            Utils.Warn($"BTKUILib was not found. Integration will be unavailable! ({mods.Count} mods loaded)");
+            return;
+        }
+        CreateUi();
+    }
 
-        if (MelonLoader.MelonMod.RegisteredMelons.FirstOrDefault(m => m.Info.Name == "BTKUILib") != null)
-            CreateUi();
+    static Page GetRuleDetailsPage(string hash) {
+        //Utils.Debug($"GetRuleDetailsPage start {hash}");
+        var rule = PropConfigManager.GetRuleByHash(hash);
+        RuleDetailsPage ??= new Page(Properties.AssemblyInfoParams.Name, "Rule", isRootPage: false, "prop");
+        RuleDetailsPage.MenuTitle = rule.Name ?? "Unknown";
+        RuleDetailsPage.MenuSubtitle = rule.ToString();
+        RuleDetailsPage.ClearChildren();
+        var catText = ""; // Thanks to https://github.com/Nirv-git/CVRMods-Nirv/blob/main/WorldPropListMod/BTKUI_Cust.cs#L367
+        if (rule.Name != null) catText += $"Name: {rule.Name}<p>";
+        if (rule.File != null) catText += $"File: {rule.File.Name}<p>";
+        if (rule.WorldId != null) catText += $"World: {rule.WorldId}<p>";
+        if (rule.WorldName != null) catText += $"World Name: {rule.WorldName} <p>";
+        if (rule.SceneName != null) catText += $"Scene Name: {rule.SceneName}<p>";
+        if (rule.InstancePrivacy != null) catText += $"Instance Privacy: {rule.InstancePrivacy}<p>";
+        if (rule.PropSelectionRandom != null) catText += $"Random: {(rule.PropSelectionRandom > 0 ? rule.PropSelectionRandom : "No")}<p>";
+
+        var detailsCat = RuleDetailsPage.AddCategory("temp", true, false);
+        detailsCat.CategoryName = catText;
+        var props = RuleDetailsPage.AddCategory($"{rule.Props.Count} Props");
+        foreach (var prop in rule.Props) {
+            var posStr = $"Position: {prop.Position?.ToVector3().ToString()}";
+            if (prop.Rotation != null) posStr += $"<p>Rotation: {prop.Rotation?.ToQuaternion().ToString()}";
+            var but = props.AddButton(prop.Name ?? prop.Id, "prop", posStr, ButtonStyle.TextOnly);
+            but.OnPress += () => {
+                //Utils.Debug($"pressed button {but.ButtonText} start");
+                ViewManager.Instance.GetPropDetails(prop.Id); // thanks to https://github.com/Nirv-git/CVRMods-Nirv/blob/main/WorldPropListMod/BTKUI_Cust.cs#L309
+                ViewManager.Instance.UiStateToggle(true);
+                //Utils.Debug($"pressed button {but.ButtonText} end");
+            };
+        }
+        //Utils.Debug($"GetRuleDetailsPage end");
+        return RuleDetailsPage;
     }
 
     static Page GetRulesPage() {
-        var page = new Page(Properties.AssemblyInfoParams.Name, "RulesPage", true, "prop");
-        page.MenuTitle = $"PropSpawner Rules ({PropConfigManager.Rules.Count})";
-        page.MenuSubtitle = $"List of {PropConfigManager.Rules.Count} loaded rules";
-        foreach (var rule in PropConfigManager.Rules) {
-
+        RulesPage ??= new Page(Properties.AssemblyInfoParams.Name, "Rules", isRootPage: false, "prop");
+        RulesPage.MenuTitle = $"{Properties.AssemblyInfoParams.Name} Rules ({PropConfigManager.Rules.Count})";
+        RulesPage.MenuSubtitle = $"List of rules loaded by {Properties.AssemblyInfoParams.Name}";
+        RulesPage.ClearChildren();
+        foreach (var (file, rules) in PropConfigManager.GetValidConfigFiles()) {
+            var cat = RulesPage.AddCategory(file.Name);
+            foreach (var rule in rules) {
+                var but = cat.AddButton(rule.MatchStr(), "prop", rule.Hash, ButtonStyle.TextOnly);
+                but.OnPress += () => {
+                    //Utils.Debug($"pressed button {but.ButtonText} start");
+                    GetRuleDetailsPage(rule.Hash).OpenPage();
+                    //Utils.Debug($"pressed button {but.ButtonText} end");
+                };
+            }
         }
+        return RulesPage;
+    }
+
+    static Page GetMainPage() {
+        MainPage ??= new Page(Properties.AssemblyInfoParams.Name, "Main", isRootPage: true, "prop"); ;
+        MainPage.MenuTitle = Properties.AssemblyInfoParams.Name;
+        MainPage.MenuSubtitle = $"{PropConfigManager.Rules.Count} rules loaded";
+        MainPage.ClearChildren();
+
+        var actions = MainPage.AddCategory("Main Actions");
+        actions.AddButton("List Rules", "prop", "List all rules currently loaded by the mod", ButtonStyle.TextOnly).OnPress += () => {
+            GetRulesPage().OpenPage();
+        };
+        actions.AddButton("Reload rules", "reload", "Forces the mod to reload all rules from your config files", ButtonStyle.TextOnly).OnPress += () => {
+            PropConfigManager.LoadConfigs();
+            GetMainPage().OpenPage();
+        };
+        actions.AddButton("Manually spawn", "prop", "Manually spawns all props that would match the current world", ButtonStyle.TextOnly).OnPress += () => {
+            PropSpawner.QueueProps();
+        };
+        return MainPage;
     }
 
     // Separated method, otherwise exception is thrown, funny CSharp and optional references, smh
     static void CreateUi() {
-        BTKUILib.QuickMenuAPI.PrepareIcon(Properties.AssemblyInfoParams.Name, "prop", GetIconStream("prop"));
-
-
-
-
-
-
-        var l_modCategory = l_modRoot.AddCategory("Settings");
-
-        l_modCategory.AddButton("Switch ragdoll", "PRM-Person", "Switch between normal and ragdoll state.").OnPress += OnSwitch;
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Use hotkey", "Switch ragdoll mode with 'R' key", Settings.Hotkey));
-        (ms_uiElements[(int)UiIndex.Hotkey] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.Hotkey, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Use gravity", "Apply gravity to ragdoll", Settings.Gravity));
-        (ms_uiElements[(int)UiIndex.Gravity] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.Gravity, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Pointers reaction", "React to trigger colliders with CVRPointer component of 'ragdoll' type", Settings.PointersReaction));
-        (ms_uiElements[(int)UiIndex.PointersReaction] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.PointersReaction, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Ignore local pointers", "Ignore local avatar's CVRPointer components of 'ragdoll' type", Settings.IgnoreLocal));
-        (ms_uiElements[(int)UiIndex.IgnoreLocal] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.IgnoreLocal, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Combat reaction", "Ragdoll upon combat system death", Settings.CombatReaction));
-        (ms_uiElements[(int)UiIndex.CombatReaction] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.CombatReaction, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Auto recover", "Automatically unragdoll after set recover delay", Settings.AutoRecover));
-        (ms_uiElements[(int)UiIndex.AutoRecover] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.AutoRecover, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Slipperiness", "Enables/disables friction of ragdoll", Settings.Slipperiness));
-        (ms_uiElements[(int)UiIndex.Slipperiness] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.Slipperiness, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Bounciness", "Enables/disables bounciness of ragdoll", Settings.Bounciness));
-        (ms_uiElements[(int)UiIndex.Bounciness] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.Bounciness, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("View direction velocity", "Apply velocity to camera view direction", Settings.ViewVelocity));
-        (ms_uiElements[(int)UiIndex.ViewVelocity] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.ViewVelocity, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Jump recover", "Recover from ragdoll state by jumping", Settings.JumpRecover));
-        (ms_uiElements[(int)UiIndex.JumpRecover] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.JumpRecover, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Buoyancy", "Enable buoyancy in fluid volumes. Warning: constantly changes movement and air drag of hips, spine and chest.", Settings.Buoyancy));
-        (ms_uiElements[(int)UiIndex.Buoyancy] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.Buoyancy, state);
-
-        ms_uiElements.Add(l_modCategory.AddToggle("Fall damage", "Enable ragdoll when falling from height", Settings.FallDamage));
-        (ms_uiElements[(int)UiIndex.FallDamage] as BTK.UIObjects.Components.ToggleButton).OnValueUpdated += (state) => OnToggleUpdate(UiIndex.FallDamage, state);
-
-        ms_uiElements.Add(l_modCategory.AddSlider("Velocity multiplier", "Velocity multiplier upon entering ragdoll state", Settings.VelocityMultiplier, 1f, 50f));
-        (ms_uiElements[(int)UiIndex.VelocityMultiplier] as BTK.UIObjects.Components.SliderFloat).OnValueUpdated += (value) => OnSliderUpdate(UiIndex.VelocityMultiplier, value);
-
-        ms_uiElements.Add(l_modCategory.AddSlider("Movement drag", "Movement resistance", Settings.MovementDrag, 0f, 50f));
-        (ms_uiElements[(int)UiIndex.MovementDrag] as BTK.UIObjects.Components.SliderFloat).OnValueUpdated += (value) => OnSliderUpdate(UiIndex.MovementDrag, value);
-
-        ms_uiElements.Add(l_modCategory.AddSlider("Angular movement drag", "Rotation movement resistance", Settings.AngularDrag, 0f, 50f));
-        (ms_uiElements[(int)UiIndex.AngularDrag] as BTK.UIObjects.Components.SliderFloat).OnValueUpdated += (value) => OnSliderUpdate(UiIndex.AngularDrag, value);
-
-        ms_uiElements.Add(l_modCategory.AddSlider("Recover delay (seconds)", "Recover delay for automatic recover", Settings.RecoverDelay, 1f, 10f));
-        (ms_uiElements[(int)UiIndex.RecoverDelay] as BTK.UIObjects.Components.SliderFloat).OnValueUpdated += (value) => OnSliderUpdate(UiIndex.RecoverDelay, value);
-
-        ms_uiElements.Add(l_modCategory.AddSlider("Fall limit", "Height limit for fall damage", Settings.FallLimit, 0f, 100f));
-        (ms_uiElements[(int)UiIndex.FallLimit] as BTK.UIObjects.Components.SliderFloat).OnValueUpdated += (value) => OnSliderUpdate(UiIndex.FallLimit, value);
-
-        l_modCategory.AddButton("Reset settings", "", "Reset mod settings to default").OnPress += Reset;
+        //BTKUILib.QuickMenuAPI.PrepareIcon(Properties.AssemblyInfoParams.Name, "prop", GetIconStream("prop"));
+        GetMainPage();
     }
 
     static void OnSwitch() {
@@ -112,119 +123,9 @@ internal class BTK {
         }
     }
 
-    static void OnToggleUpdate(UiIndex p_index, bool p_state, bool p_force = false) {
-        try {
-            switch (p_index) {
-                case UiIndex.Hotkey:
-                    Settings.SetSetting(Settings.ModSetting.Hotkey, p_state);
-                    break;
-
-                case UiIndex.Gravity:
-                    Settings.SetSetting(Settings.ModSetting.Gravity, p_state);
-                    break;
-
-                case UiIndex.PointersReaction:
-                    Settings.SetSetting(Settings.ModSetting.PointersReaction, p_state);
-                    break;
-
-                case UiIndex.IgnoreLocal:
-                    Settings.SetSetting(Settings.ModSetting.IgnoreLocal, p_state);
-                    break;
-
-                case UiIndex.CombatReaction:
-                    Settings.SetSetting(Settings.ModSetting.CombatReaction, p_state);
-                    break;
-
-                case UiIndex.AutoRecover:
-                    Settings.SetSetting(Settings.ModSetting.AutoRecover, p_state);
-                    break;
-
-                case UiIndex.Slipperiness:
-                    Settings.SetSetting(Settings.ModSetting.Slipperiness, p_state);
-                    break;
-
-                case UiIndex.Bounciness:
-                    Settings.SetSetting(Settings.ModSetting.Bounciness, p_state);
-                    break;
-
-                case UiIndex.ViewVelocity:
-                    Settings.SetSetting(Settings.ModSetting.ViewVelocity, p_state);
-                    break;
-
-                case UiIndex.JumpRecover:
-                    Settings.SetSetting(Settings.ModSetting.JumpRecover, p_state);
-                    break;
-
-                case UiIndex.Buoyancy:
-                    Settings.SetSetting(Settings.ModSetting.Buoyancy, p_state);
-                    break;
-
-                case UiIndex.FallDamage:
-                    Settings.SetSetting(Settings.ModSetting.FallDamage, p_state);
-                    break;
-            }
-
-            if (p_force)
-                (ms_uiElements[(int)p_index] as BTK.UIObjects.Components.ToggleButton).ToggleValue = p_state;
-        } catch (Exception e) {
-            MelonLoader.MelonLogger.Error(e);
-        }
-    }
-
-    static void OnSliderUpdate(UiIndex p_index, float p_value, bool p_force = false) {
-        try {
-            switch (p_index) {
-                case UiIndex.VelocityMultiplier:
-                    Settings.SetSetting(Settings.ModSetting.VelocityMultiplier, p_value);
-                    break;
-
-                case UiIndex.MovementDrag:
-                    Settings.SetSetting(Settings.ModSetting.MovementDrag, p_value);
-                    break;
-
-                case UiIndex.AngularDrag:
-                    Settings.SetSetting(Settings.ModSetting.AngularDrag, p_value);
-                    break;
-
-                case UiIndex.RecoverDelay:
-                    Settings.SetSetting(Settings.ModSetting.RecoverDelay, p_value);
-                    break;
-
-                case UiIndex.FallLimit:
-                    Settings.SetSetting(Settings.ModSetting.FallLimit, p_value);
-                    break;
-            }
-
-            if (p_force)
-                (ms_uiElements[(int)p_index] as BTK.UIObjects.Components.SliderFloat).SetSliderValue(p_value);
-        } catch (Exception e) {
-            MelonLoader.MelonLogger.Error(e);
-        }
-    }
-
-    static void Reset() {
-        OnToggleUpdate(UiIndex.Hotkey, true, true);
-        OnToggleUpdate(UiIndex.Gravity, true, true);
-        OnToggleUpdate(UiIndex.PointersReaction, true, true);
-        OnToggleUpdate(UiIndex.IgnoreLocal, true, true);
-        OnToggleUpdate(UiIndex.CombatReaction, true, true);
-        OnToggleUpdate(UiIndex.AutoRecover, false, true);
-        OnToggleUpdate(UiIndex.Slipperiness, false, true);
-        OnToggleUpdate(UiIndex.Bounciness, false, true);
-        OnToggleUpdate(UiIndex.ViewVelocity, false, true);
-        OnToggleUpdate(UiIndex.JumpRecover, false, true);
-        OnToggleUpdate(UiIndex.Buoyancy, true, true);
-        OnToggleUpdate(UiIndex.FallDamage, true, true);
-        OnSliderUpdate(UiIndex.VelocityMultiplier, 2f, true);
-        OnSliderUpdate(UiIndex.MovementDrag, 1f, true);
-        OnSliderUpdate(UiIndex.AngularDrag, 1f, true);
-        OnSliderUpdate(UiIndex.RecoverDelay, 3f, true);
-        OnSliderUpdate(UiIndex.FallLimit, 5f, true);
-    }
-
     static Stream GetIconStream(string p_name) {
         Assembly l_assembly = Assembly.GetExecutingAssembly();
         string l_assemblyName = l_assembly.GetName().Name;
-        return l_assembly.GetManifestResourceStream(l_assemblyName + ".Properties.Resources." + p_name);
+        return l_assembly.GetManifestResourceStream(l_assemblyName + ".resources." + p_name);
     }
 }

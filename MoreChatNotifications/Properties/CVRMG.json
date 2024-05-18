@@ -1,0 +1,19 @@
+{
+	"_id": -1,
+	"name": "MoreChatNotifications",
+	"modversion": "1.0.0",
+	"gameversion": "2024r175",
+	"loaderversion": "v0.6.1",
+	"modtype": "Mod",
+	"author": "Bluscream",
+	"description": "Simple `Mod` that allows you to  \n\n",
+	"searchtags": [
+		"chatbox",
+		"notifications"
+	],
+	"requirements": [],
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download//MoreChatNotifications.dll",
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/MoreChatNotifications",
+	"changelog": "- Initial release.",
+	"embedcolor": "006CFF"
+}

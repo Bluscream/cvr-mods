@@ -916,5 +916,9 @@
             <HintPath>$(MsBuildThisFileDirectory)\.ManagedLibs\websocket-sharp.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="BTKUILib">
+            <HintPath>G:\Steam\steamapps\common\ChilloutVR\Mods\BTKUILib.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
     </ItemGroup>
 </Project>

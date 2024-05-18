@@ -5,6 +5,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Text;
 using UnityEngine;
+using ABI_RC.Core.Player;
+using Newtonsoft.Json;
+using System.Net;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
+using System.Security.Cryptography;
 
 namespace Bluscream.PropSpawner;
 
@@ -160,9 +166,51 @@ public static partial class Extensions {
     #endregion
     #region UI
     #endregion
+
     #region Object
+    public static string ToJSON(this object obj, bool indented = true) {
+        // return JsonConvert.SerializeObject(obj, (indented ? Formatting.Indented : Formatting.None), new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, DateFormatString = "yyyy-MM-dd hh:mm:ss"}) ; // , new JsonConverter[] { new StringEnumConverter() }
+        return JsonConvert.SerializeObject(obj, (indented ? Formatting.Indented : Formatting.None), [new StringEnumConverter(), new IPAddressConverter(), new IPEndPointConverter()]);
+    }
     #endregion
     #region String
+    public static string ToMd5(this string input) {
+        using (MD5 md5 = MD5.Create()) {
+            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length; i++) {
+                sb.Append(hashBytes[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+    }
+    public static UnityEngine.Vector3? ParseVector3(this string source) {
+        var split = source.Split(",");
+        switch (split.Length) {
+            case 3:
+                return new UnityEngine.Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+            case 2:
+                return new UnityEngine.Vector3(float.Parse(split[0]), PlayerSetup.Instance.gameObject.transform.position.y, float.Parse(split[2]));
+            case 1:
+                return new UnityEngine.Vector3(PlayerSetup.Instance.gameObject.transform.position.x, float.Parse(split[0]), PlayerSetup.Instance.gameObject.transform.position.z);
+        }
+        return null;
+    }
+    public static UnityEngine.Quaternion? ParseQuaternion(this string source) {
+        var split = source.Split(",");
+        switch (split.Length) {
+            case 4:
+                return new UnityEngine.Quaternion(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]), float.Parse(split[3]));
+            case 3:
+                return new UnityEngine.Quaternion(float.Parse(split[0]), PlayerSetup.Instance.gameObject.transform.rotation.y, float.Parse(split[1]), float.Parse(split[2]));
+            case 2:
+                return new UnityEngine.Quaternion(PlayerSetup.Instance.gameObject.transform.rotation.x, float.Parse(split[0]), PlayerSetup.Instance.gameObject.transform.rotation.z, float.Parse(split[1]));
+            case 1:
+                return new UnityEngine.Quaternion(PlayerSetup.Instance.gameObject.transform.rotation.x, float.Parse(split[0]), PlayerSetup.Instance.gameObject.transform.rotation.z, PlayerSetup.Instance.gameObject.transform.rotation.w);
+        }
+        return null;
+    }
     public static IEnumerable<string> SplitToLines(this string input) {
         if (input == null) {
             yield break;
@@ -298,4 +346,38 @@ public static partial class Extensions {
     public static string ToEnabledDisabled(this bool input) => input ? "Enabled" : "Disabled";
     public static string ToOnOff(this bool input) => input ? "On" : "Off";
     #endregion
+    internal class IPAddressConverter : JsonConverter {
+        public override bool CanConvert(Type objectType) {
+            return (objectType == typeof(IPAddress));
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+            writer.WriteValue(value.ToString());
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+            return IPAddress.Parse((string)reader.Value);
+        }
+    }
+
+    internal class IPEndPointConverter : JsonConverter {
+        public override bool CanConvert(Type objectType) {
+            return (objectType == typeof(IPEndPoint));
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+            IPEndPoint ep = (IPEndPoint)value;
+            JObject jo = new JObject();
+            jo.Add("Address", JToken.FromObject(ep.Address, serializer));
+            jo.Add("Port", ep.Port);
+            jo.WriteTo(writer);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+            JObject jo = JObject.Load(reader);
+            IPAddress address = jo["Address"].ToObject<IPAddress>(serializer);
+            int port = (int)jo["Port"];
+            return new IPEndPoint(address, port);
+        }
+    }
 }

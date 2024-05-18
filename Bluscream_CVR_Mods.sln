@@ -20,6 +20,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropSpawner", "PropSpawner\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BTKUILib", "..\BTKUILib\BTKUILib.csproj", "{3C2C947A-6522-4A4F-B6FA-755A5293817D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatBox", "..\Kafe_CVR_Mods\ChatBox\ChatBox.csproj", "{ED73DD3D-5BF4-4E64-B7B4-285978259209}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoreChatNotifications", "MoreChatNotifications\MoreChatNotifications.csproj", "{D58475B2-CFEC-4346-808A-9E69E66EE018}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRModeSwitchHotkey", "VRModeSwitchHotkey\VRModeSwitchHotkey.csproj", "{A3BA3F23-E622-497A-BDCC-1BB83640F5BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +48,18 @@ Global
 		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2C947A-6522-4A4F-B6FA-755A5293817D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED73DD3D-5BF4-4E64-B7B4-285978259209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED73DD3D-5BF4-4E64-B7B4-285978259209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED73DD3D-5BF4-4E64-B7B4-285978259209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED73DD3D-5BF4-4E64-B7B4-285978259209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D58475B2-CFEC-4346-808A-9E69E66EE018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D58475B2-CFEC-4346-808A-9E69E66EE018}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D58475B2-CFEC-4346-808A-9E69E66EE018}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D58475B2-CFEC-4346-808A-9E69E66EE018}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3BA3F23-E622-497A-BDCC-1BB83640F5BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3BA3F23-E622-497A-BDCC-1BB83640F5BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3BA3F23-E622-497A-BDCC-1BB83640F5BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3BA3F23-E622-497A-BDCC-1BB83640F5BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

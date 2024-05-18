@@ -57,6 +57,8 @@ namespace Bluscream.PropSpawner {
             Utils.Log($"Loaded {Rules.Count} rules from {jsonFiles.Length} config files.");
             return ret;
         }
+        internal static PropRule GetRuleByHash(string md5Hash) => GetRulesByHash(md5Hash).FirstOrDefault();
+        internal static List<PropRule> GetRulesByHash(string md5Hash) => Rules.Where(r => r.Hash == md5Hash).ToList();
         internal static HashSet<FileInfo> GetFilesFromRules() => Rules.Select(r => r.File).ToHashSet();
         internal static List<PropRule> GetRulesByFile(FileInfo file) => Rules.Where(r => r.File == file).ToList();
         internal static List<PropRule> Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {

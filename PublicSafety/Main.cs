@@ -6,6 +6,7 @@ using ABI_RC.Systems.GameEventSystem;
 using UnityEngine.SceneManagement;
 using MelonLoader;
 using static ABI_RC.Core.Networking.IO.Instancing.Instances;
+using ABI_RC.Core.InteractionSystem;
 
 namespace Bluscream.PublicSafety;
 
@@ -60,6 +61,11 @@ public class PublicSafety : MelonMod {
                     }
                     break;
             }
+            SaveChanges();
+        }
+        public static void SaveChanges() {
+            MetaPort.Instance.SaveGameConfig();
+            ViewManager.Instance.gameMenuView.View.TriggerEvent("CVRAppActionLoadSettings");
         }
     }
 }
