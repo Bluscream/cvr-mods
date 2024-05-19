@@ -29,6 +29,10 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<string> FBTModeSwitchNotificationsTemplateHalfBody;
     internal static MelonPreferences_Entry<bool> FBTModeSwitchNotificationsSoundEnabled;
 
+    internal static MelonPreferences_Entry<bool> VirtualDesktopDisconnected;
+    internal static MelonPreferences_Entry<string> VirtualDesktopDisconnectedTemplate;
+    internal static MelonPreferences_Entry<bool> VirtualDesktopDisconnectedSound;
+
 
     public static void InitializeMelonPrefs() {
         _melonCategory = MelonPreferences.CreateCategory(AssemblyInfoParams.Name);
@@ -74,6 +78,13 @@ public static class ModConfig {
         FBTModeSwitchNotificationsTemplateHalfBody = _melonCategory.CreateEntry("Halfbody mode switch template", "Switched to Halfbody",
             description: "Template for Halfbody mode switch notifications");
         FBTModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("FBT Mode switch notification sound", false,
+            description: "Will play a sound to other users when the notification is sent");
+
+        VirtualDesktopDisconnected = _melonCategory.CreateEntry("VirtualDesktop notifications", true,
+            description: "Will automatically send ChatBox notifications when your VR Headset disconnects from VirtualDesktop while you're in VR mode (VirtualDesktop.Server.exe quits)");
+        VirtualDesktopDisconnectedTemplate = _melonCategory.CreateEntry("VirtualDesktop template", "VR Disconnected",
+            description: "Template for VirtualDesktop notifications");
+        VirtualDesktopDisconnectedSound = _melonCategory.CreateEntry("VirtualDesktop notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
     }
 }
