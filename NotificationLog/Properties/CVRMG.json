@@ -7,7 +7,7 @@
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple highly customizable `Mod` that logs\n\n- HUD Notifications\n- Instance Joins\n- Player joins\n- Player leaves\n- Prop Spawns\n- ChatBox Messages\n\nto your MelonLoader console and log\n\n",
+	"description": "Simple highly customizable `Mod` that logs\n\n- HUD Notifications\n- Instance Joins\n- Player joins/leaves\n- Prop Spawns\n- ChatBox Messages\n\nto your MelonLoader console and log\n\n",
 	"searchtags": [
 		"logger",
 		"log",
@@ -16,7 +16,7 @@
 		"notification"
 	],
 	"requirements": [ "[ChatBox (Optional)](https://github.com/kafeijao/Kafe_CVR_Mods/tree/master/ChatBox)" ],
-	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download//MoreLogging.dll",
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/latest/download/MoreLogging.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/MoreLogging",
 	"changelog": "- Initial release.",
 	"embedcolor": "006CFF"

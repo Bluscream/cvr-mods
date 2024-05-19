@@ -1,5 +1,4 @@
 {
-	"$url": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"description": "",
 	"type": "object",

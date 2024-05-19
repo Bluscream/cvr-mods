@@ -1,4 +1,5 @@
 {
+	"$schema": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
 	"_id": -1,
 	"name": "VRModeSwitchHotkey",
 	"modversion": "1.0.0",
@@ -9,10 +10,11 @@
 	"description": "Simple `Mod` that allows you to switch between VR/Desktop mode with a simple configurable modifier+hotkey combo (works with virtual keyboards) \n\n",
 	"searchtags": [
 		"hotkey",
+		"workaround",
 		"virtualdesktop"
 	],
 	"requirements": [],
-	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download//VRModeSwitchHotkey.dll",
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/latest/download/VRModeSwitchHotkey.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/VRModeSwitchHotkey",
 	"changelog": "- Initial release.",
 	"embedcolor": "006CFF"
