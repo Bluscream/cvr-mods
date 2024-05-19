@@ -17,40 +17,38 @@ internal class ChatBox {
         IntegrationConfig.InitializeMelonPrefs();
         Logger = new MelonLogger.Instance(IntegrationConfig.LoggerName.Value, IntegrationConfig.LoggerColorARGB.Value.ToColor());
 
-        Kafe.ChatBox.API.OnMessageReceived += OnChatMessageRecieved;
-        Kafe.ChatBox.API.OnMessageSent += OnChatMessageSent;
+        Kafe.ChatBox.API.OnMessageReceived += OnChatMessage;
+        Kafe.ChatBox.API.OnMessageSent += OnChatMessage;
     }
 
-    private static void OnChatMessageSent(Kafe.ChatBox.API.ChatBoxMessage msg) {
+    private static void OnChatMessage(Kafe.ChatBox.API.ChatBoxMessage msg) {
         if (!ModConfig.EnableMod.Value) return;
         var isPlayerMessage = msg.DisplayOnChatBox && msg.Source != Kafe.ChatBox.API.MessageSource.Mod;
+        var senderIsLocalPlayer = Utils.IsLocalPlayer(msg.SenderGuid);
         var senderName = Utils.GetPlayerNameById(msg.SenderGuid);
-        if (IntegrationConfig.LogOutgoingChat.Value && isPlayerMessage) {
-            Logger.Msg(IntegrationConfig.LogOutgoingChatColorARGB.Value.ToColor(),
-                string.Format(IntegrationConfig.LogOutgoingChatTemplate.Value,
-                                      msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
-        } else if (IntegrationConfig.LogOutgoingMod.Value && !isPlayerMessage) {
-            Logger.Msg(IntegrationConfig.LogOutgoingModColorARGB.Value.ToColor(),
-                string.Format(IntegrationConfig.LogOutgoingModTemplate.Value,
-                                      msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
-        }
-    }
-
-    private static void OnChatMessageRecieved(Kafe.ChatBox.API.ChatBoxMessage msg) {
-        if (!ModConfig.EnableMod.Value) return;
-        var isPlayerMessage = msg.DisplayOnChatBox && msg.Source != Kafe.ChatBox.API.MessageSource.Mod;
-        var senderName = Utils.GetPlayerNameById(msg.SenderGuid);
-        if (isPlayerMessage) {
-            if (!msg.TriggerNotification && IntegrationConfig.LogIncomingChatToHUD.Value) Utils.HUDNotify(senderName, msg.Message, "Chat", 5f);
-            if (IntegrationConfig.LogIncomingChat.Value) {
-                Logger.Msg(IntegrationConfig.LogIncomingChatColorARGB.Value.ToColor(),
-                    string.Format(IntegrationConfig.LogIncomingChatTemplate.Value,
+        if (senderIsLocalPlayer) {
+            if (IntegrationConfig.LogOutgoingChat.Value && isPlayerMessage) {
+                Logger.Msg(IntegrationConfig.LogOutgoingChatColorARGB.Value.ToColor(),
+                    string.Format(IntegrationConfig.LogOutgoingChatTemplate.Value,
+                                          msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
+            } else if (IntegrationConfig.LogOutgoingMod.Value && !isPlayerMessage) {
+                Logger.Msg(IntegrationConfig.LogOutgoingModColorARGB.Value.ToColor(),
+                    string.Format(IntegrationConfig.LogOutgoingModTemplate.Value,
                                           msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
             }
-        } else if (IntegrationConfig.LogIncomingMod.Value && !isPlayerMessage) {
-            Logger.Msg(IntegrationConfig.LogIncomingModColorARGB.Value.ToColor(),
-                string.Format(IntegrationConfig.LogIncomingModTemplate.Value,
-                                      msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
+        } else {
+            if (isPlayerMessage) {
+                if (!msg.TriggerNotification && IntegrationConfig.LogIncomingChatToHUD.Value) Utils.HUDNotify(senderName, msg.Message, "Chat", 5f);
+                if (IntegrationConfig.LogIncomingChat.Value) {
+                    Logger.Msg(IntegrationConfig.LogIncomingChatColorARGB.Value.ToColor(),
+                        string.Format(IntegrationConfig.LogIncomingChatTemplate.Value,
+                                              msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
+                }
+            } else if (!isPlayerMessage && IntegrationConfig.LogIncomingMod.Value) {
+                Logger.Msg(IntegrationConfig.LogIncomingModColorARGB.Value.ToColor(),
+                    string.Format(IntegrationConfig.LogIncomingModTemplate.Value,
+                                          msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
+            }
         }
     }
 
