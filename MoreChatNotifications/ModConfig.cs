@@ -29,9 +29,16 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<string> FBTModeSwitchNotificationsTemplateHalfBody;
     internal static MelonPreferences_Entry<bool> FBTModeSwitchNotificationsSoundEnabled;
 
-    internal static MelonPreferences_Entry<bool> VirtualDesktopDisconnected;
-    internal static MelonPreferences_Entry<string> VirtualDesktopDisconnectedTemplate;
-    internal static MelonPreferences_Entry<bool> VirtualDesktopDisconnectedSound;
+    internal static MelonPreferences_Entry<bool> VoiceConnectionLostNotificationEnabled;
+    internal static MelonPreferences_Entry<string> VoiceConnectionLostNotificationTemplateLost;
+    internal static MelonPreferences_Entry<string> VoiceConnectionLostNotificationTemplateGained;
+    internal static MelonPreferences_Entry<bool> VoiceConnectionLostNotificationSoundEnabled;
+
+    internal static MelonPreferences_Entry<bool> MicrophoneNotificationEnabled;
+    internal static MelonPreferences_Entry<string> MicrophoneNotificationTemplateMuted;
+    internal static MelonPreferences_Entry<string> MicrophoneNotificationTemplateUnmuted;
+    internal static MelonPreferences_Entry<bool> MicrophoneNotificationSoundEnabled;
+
 
 
     public static void InitializeMelonPrefs() {
@@ -80,11 +87,22 @@ public static class ModConfig {
         FBTModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("FBT Mode switch notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
-        VirtualDesktopDisconnected = _melonCategory.CreateEntry("VirtualDesktop notifications", true,
-            description: "Will automatically send ChatBox notifications when your VR Headset disconnects from VirtualDesktop while you're in VR mode (VirtualDesktop.Server.exe quits)");
-        VirtualDesktopDisconnectedTemplate = _melonCategory.CreateEntry("VirtualDesktop template", "VR Disconnected",
-            description: "Template for VirtualDesktop notifications");
-        VirtualDesktopDisconnectedSound = _melonCategory.CreateEntry("VirtualDesktop notification sound", false,
+        VoiceConnectionLostNotificationEnabled = _melonCategory.CreateEntry("Voice connection lost notifications", false,
+            description: "Will automatically send ChatBox notifications when you loose connection to the Voice System (preferably use the VoiceConnectionStatus mod instead)");
+        VoiceConnectionLostNotificationTemplateLost = _melonCategory.CreateEntry("Voice connection lost template", "Voice Disconnected",
+            description: "Template for voice connection lost notifications");
+        VoiceConnectionLostNotificationTemplateGained = _melonCategory.CreateEntry("Voice connection regained template", "Voice Connected",
+            description: "Template for voice connection regained notifications");
+        VoiceConnectionLostNotificationSoundEnabled = _melonCategory.CreateEntry("Voice connection lost notification sound", false,
+            description: "Will play a sound to other users when the notification is sent");
+
+        MicrophoneNotificationEnabled = _melonCategory.CreateEntry("Microphone notifications", false,
+            description: "Will automatically send ChatBox notifications when you loose connection to the Voice System (preferably use the VoiceConnectionStatus mod instead)");
+        MicrophoneNotificationTemplateMuted = _melonCategory.CreateEntry("Microphone muted template", "Microphone muted",
+            description: "Template for Microphone muted notifications");
+        MicrophoneNotificationTemplateUnmuted = _melonCategory.CreateEntry("Microphone unmuted template", "Microphone unmuted",
+            description: "Template for Microphone unmuted notifications");
+        MicrophoneNotificationSoundEnabled = _melonCategory.CreateEntry("Microphone notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
     }
 }

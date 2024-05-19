@@ -13,7 +13,7 @@ internal class VirtualDesktop {
     }
 
     internal static void CheckForVirtualDesktop() {
-        if (!ModConfig.EnableMod.Value || !ModConfig.VirtualDesktopDisconnected.Value) return;
+        if (!ModConfig.EnableMod.Value || !ModuleConfig.VirtualDesktopDisconnected.Value) return;
         VirtualDesktopProcess = Process.GetProcessesByName("VirtualDesktop.Server").FirstOrDefault();
         if (VirtualDesktopProcess != null) {
             Mod.Logger.Msg($"VirtualDesktopProcess found: {VirtualDesktopProcess.Id}");
@@ -22,7 +22,7 @@ internal class VirtualDesktop {
     }
 
     private static void VirtualDesktopProcess_Exited(object sender, EventArgs e) {
-        if (!ModConfig.EnableMod.Value || !ModConfig.VirtualDesktopDisconnected.Value) return;
+        if (!ModConfig.EnableMod.Value || !ModuleConfig.VirtualDesktopDisconnected.Value) return;
         Mod.Logger.Msg("VirtualDesktopProcess_Exited");
         if (VRModeSwitchManager.Instance.IsInXR())
             Mod.SendChatNotification("VirtualDesktop Disconnected");

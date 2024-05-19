@@ -9,6 +9,8 @@ using ABI_RC.Core.Savior;
 using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.IK;
 using System.Diagnostics;
+using Unity.Services.Analytics;
+using ABI_RC.Core.UI;
 
 namespace Bluscream.MoreChatNotifications;
 public class Mod : MelonMod {
@@ -45,7 +47,7 @@ public class Mod : MelonMod {
     internal static void OnFirstWorldLoaded() {
         if (!ModConfig.EnableMod.Value) return;
         Logger.Msg("OnFirstWorldLoaded");
-        if (ModConfig.VirtualDesktopDisconnected.Value) Modules.VirtualDesktop.CheckForVirtualDesktop();
+        if (Modules.VirtualDesktop.ModuleConfig.VirtualDesktopDisconnected.Value) Modules.VirtualDesktop.CheckForVirtualDesktop();
     }
 
     [HarmonyPatch]
@@ -95,8 +97,26 @@ public class Mod : MelonMod {
         internal static void AfterToggleFullBody() {
             if (!ModConfig.EnableMod.Value || !ModConfig.FBTModeSwitchNotificationsEnabled.Value) return;
             SendChatNotification(
-                text: IKSystem.Instance.BodySystem.FullBodyEnabled ? ModConfig.FBTModeSwitchNotificationsTemplateFBT.Value : ModConfig.FBTModeSwitchNotificationsTemplateHalfBody,
+                text: IKSystem.Instance.BodySystem.FullBodyEnabled ? ModConfig.FBTModeSwitchNotificationsTemplateFBT.Value : ModConfig.FBTModeSwitchNotificationsTemplateHalfBody.Value,
                 sendSoundNotification: ModConfig.FBTModeSwitchNotificationsSoundEnabled.Value
+            );
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CohtmlHud), nameof(CohtmlHud.SetCommsIndicator))]
+        internal static void AfterSetCommsIndicator(bool shown) {
+            if (!ModConfig.EnableMod.Value || !ModConfig.VoiceConnectionLostNotificationEnabled.Value) return;
+            SendChatNotification(
+                text: string.Format(shown ? ModConfig.VoiceConnectionLostNotificationTemplateGained.Value : ModConfig.VoiceConnectionLostNotificationTemplateLost.Value),
+                sendSoundNotification: ModConfig.VoiceConnectionLostNotificationSoundEnabled.Value
+            );
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AudioManagement), nameof(AudioManagement.SetMicrophoneActive))]
+        internal static void AfterSetMicrophoneActive(bool active) {
+            if (!ModConfig.EnableMod.Value || !ModConfig.MicrophoneNotificationEnabled.Value) return;
+            SendChatNotification(
+                text: string.Format(active ? ModConfig.MicrophoneNotificationTemplateUnmuted.Value : ModConfig.MicrophoneNotificationTemplateMuted.Value),
+                sendSoundNotification: ModConfig.MicrophoneNotificationSoundEnabled.Value
             );
         }
     }
