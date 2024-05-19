@@ -2,7 +2,7 @@
 using ABI_RC.Core.Savior;
 using System.Drawing;
 
-namespace Bluscream.NotificationLog {
+namespace Bluscream.SimpleLog {
     internal class Utils {
         //internal static Color GetColor(List<ushort> _c) => Color.FromArgb(_c[0], _c[1], _c[2], _c[3]);  // cursed
         internal static string GetPlayerNameById(string playerId) {

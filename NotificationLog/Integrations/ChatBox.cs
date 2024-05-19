@@ -1,8 +1,8 @@
 ﻿using MelonLoader;
-using Bluscream.NotificationLog.Properties;
+using Bluscream.SimpleLog.Properties;
 using NotificationLog;
 
-namespace Bluscream.NotificationLog.Integrations;
+namespace Bluscream.SimpleLog.Integrations;
 internal class ChatBox {
     public static MelonLogger.Instance Logger;
     internal class UiEvent {
@@ -86,28 +86,28 @@ internal class ChatBox {
                 description: "Whether to log incoming chat messages to MelonLoader console/log or not.");
             LogIncomingChatColorARGB = _melonCategory.CreateEntry("Incoming chat messages color (ARGB)", new List<ushort> { 255, 255, 60, 0 },
                 description: "The color to use in the MelonLoader Console when logging incoming chat messages");
-            LogIncomingChatTemplate = _melonCategory.CreateEntry("Incoming chat messages log template", "Message from {1}: \"{0}\"",
+            LogIncomingChatTemplate = _melonCategory.CreateEntry("Incoming chat messages template", "Message from {1}: \"{0}\"",
                 description: "The template to use for logging incoming chat messages (The following replacements are available: {0}=message,{1}=userName,{2}=userId,{3}=source,{4}=modname)");
 
             LogIncomingMod = _melonCategory.CreateEntry("Log incoming mod messages", false,
                 description: "Whether to log incoming mod messages to MelonLoader console/log or not.");
             LogIncomingModColorARGB = _melonCategory.CreateEntry("Incoming mod messages color (ARGB)", new List<ushort> { 255, 255, 60, 0 },
                 description: "The color to use in the MelonLoader Console when logging incoming mod messages");
-            LogIncomingModTemplate = _melonCategory.CreateEntry("Incoming mod messages log template", "Mod Message from {1} via \"{4}\": \"{0}\"",
+            LogIncomingModTemplate = _melonCategory.CreateEntry("Incoming mod messages template", "Mod Message from {1} via \"{4}\": \"{0}\"",
                 description: "The template to use for logging incoming mod messages (The following replacements are available: {0}=message,{1}=userName,{2}=userId,{3}=source,{4}=modname)");
 
             LogOutgoingChat = _melonCategory.CreateEntry("Log outgoing chat messages", true,
                 description: "Whether to log outgoing chat messages to MelonLoader console/log or not.");
             LogOutgoingChatColorARGB = _melonCategory.CreateEntry("Outgoing chat messages color (ARGB)", new List<ushort> { 255, 255, 60, 0 },
                 description: "The color to use in the MelonLoader Console when logging outgoing chat messages");
-            LogOutgoingChatTemplate = _melonCategory.CreateEntry("Outgoing chat messages log template", "Message from {1}: \"{0}\"",
+            LogOutgoingChatTemplate = _melonCategory.CreateEntry("Outgoing chat messages template", "Message from {1}: \"{0}\"",
                 description: "The template to use for logging outgoing chat messages (The following replacements are available: {0}=message,{1}=userName,{2}=userId,{3}=source,{4}=modname)");
 
             LogOutgoingMod = _melonCategory.CreateEntry("Log outgoing mod messages", false,
                 description: "Whether to log outgoing mod messages to MelonLoader console/log or not.");
             LogOutgoingModColorARGB = _melonCategory.CreateEntry("Outgoing mod messages color (ARGB)", new List<ushort> { 255, 255, 60, 0 },
                 description: "The color to use in the MelonLoader Console when logging outgoing mod messages");
-            LogOutgoingModTemplate = _melonCategory.CreateEntry("Outgoing mod messages log template", "Mod Message from {1} via \"{4}\": \"{0}\"",
+            LogOutgoingModTemplate = _melonCategory.CreateEntry("Outgoing mod messages template", "Mod Message from {1} via \"{4}\": \"{0}\"",
                 description: "The template to use for logging outgoing mod messages (The following replacements are available: {0}=message,{1}=userName,{2}=userId,{3}=source,{4}=modname)");
         }
 

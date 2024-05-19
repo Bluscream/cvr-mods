@@ -1,6 +1,6 @@
 {
 	"_id": 204,
-	"name": "NotificationLog",
+	"name": "Simple Log",
 	"modversion": "1.0.1",
 	"gameversion": "2024r175",
 	"loaderversion": "v0.6.1",
@@ -13,8 +13,8 @@
 		"hud"
 	],
 	"requirements": [],
-	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F12%2F2024/NotificationLog.dll",
-	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/NotificationLog",
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F12%2F2024/SimpleLog.dll",
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/SimpleLog",
 	"changelog": "- Initial release.",
 	"embedcolor": "006CFF"
 }

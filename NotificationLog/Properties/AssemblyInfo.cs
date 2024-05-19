@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using Bluscream.NotificationLog;
-using Bluscream.NotificationLog.Properties;
+using Bluscream.SimpleLog;
+using Bluscream.SimpleLog.Properties;
 using MelonLoader;
 
 
@@ -12,7 +12,7 @@ using MelonLoader;
 [assembly: AssemblyProduct(AssemblyInfoParams.Name)]
 
 [assembly: MelonInfo(
-    typeof(NotificationLog),
+    typeof(SimpleLog),
     AssemblyInfoParams.Name,
     AssemblyInfoParams.Version,
     AssemblyInfoParams.Author,
@@ -25,9 +25,9 @@ using MelonLoader;
 [assembly: MelonColor(200, 178, 178, 178)]
 [assembly: MelonAuthorColor(255, 0, 108, 255)]
 
-namespace Bluscream.NotificationLog.Properties;
+namespace Bluscream.SimpleLog.Properties;
 internal static class AssemblyInfoParams {
-    public const string Name = "NotificationLog";
+    public const string Name = "Simple Log";
     public const string Version = "1.0.1";
     public const string Author = "Bluscream";
 }

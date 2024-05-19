@@ -10,21 +10,23 @@ using NotificationLog;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Bluscream.NotificationLog;
+namespace Bluscream.SimpleLog;
 
-public class NotificationLog : MelonMod {
+public class SimpleLog : MelonMod {
     public static MelonLogger.Instance Logger;
+    public static MelonLogger.Instance NotificationLogger;
 
     public override void OnInitializeMelon() {
-        Logger = new MelonLogger.Instance("Notification", System.Drawing.Color.OrangeRed);
         ModConfig.InitializeMelonPrefs();
-
+        Logger = new MelonLogger.Instance(ModConfig.LoggerName.Value, ModConfig.LoggerColorARGB.Value.ToColor());
+        NotificationLogger = new MelonLogger.Instance(ModConfig.NotificationLoggerName.Value, ModConfig.NotificationLoggerColorARGB.Value.ToColor());
+        #region Events
         CVRGameEventSystem.Player.OnJoin.AddListener(player => {
             if (!ModConfig.EnableMod.Value || !ModConfig.LogPlayerJoinLeaves.Value) return;
             var tag = player.userStaffTag;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userRank;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userClanTag;
-            Logger.Msg(ModConfig.LogPlayerJoinColorARGB.Value.ToColor(),
+            NotificationLogger.Msg(ModConfig.LogPlayerJoinColorARGB.Value.ToColor(),
                 string.Format(ModConfig.LogPlayerJoinTemplate.Value,
                                       player.userName, tag, player.ownerId));
         });
@@ -54,13 +56,14 @@ public class NotificationLog : MelonMod {
         //CVRGameEventSystem.World.OnLoad.AddListener(world => {
         //    Logger.Msg($"[CVRGameEventSystem.World.OnLoad] {CVRPlayerManager.Instance.NetworkPlayers.Count} {world} Type: {MetaPort.Instance.CurrentInstancePrivacy}");
         //});
-
+        #endregion Events
+        #region Patches
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropText", new[] {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecieved)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecieved)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropText", new[] {
@@ -68,7 +71,7 @@ public class NotificationLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropTextImmediate", new[] {
@@ -76,7 +79,7 @@ public class NotificationLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropTextLong", new[] {
@@ -84,7 +87,7 @@ public class NotificationLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropTextLonger", new[] {
@@ -92,7 +95,7 @@ public class NotificationLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CVRSyncHelper"), "SpawnProp", new[] {
@@ -100,15 +103,17 @@ public class NotificationLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
         );
-
+        #endregion Patches
+        #region Integrations
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") != null) {
-            Logger.Msg("Chatbox mod found! Enabling Integration...");
+            NotificationLogger.Msg("Chatbox mod found! Enabling Integration...");
             Integrations.ChatBox.Initialize();
         } else {
-            Logger.Warning("Chatbox mod not found! Make sure it is properly installed.");
+            NotificationLogger.Warning("Chatbox mod not found! Make sure it is properly installed.");
         }
+        #endregion Integrations
     }
     private static void HUDNotificationRecieved(string headline, string small) => HUDNotificationRecievedCat(null, headline, small);
     private static void HUDNotificationRecievedCat(string cat, string headline, string small) {
@@ -120,7 +125,7 @@ public class NotificationLog : MelonMod {
                     headline = headline?.Replace("\n", " ").Trim();
                     small = small?.Replace("\n", " ").Trim();
                 }
-                Logger.Msg(ModConfig.LogHUDNotificationsColorARGB.Value.ToColor(),
+                NotificationLogger.Msg(ModConfig.LogHUDNotificationsColorARGB.Value.ToColor(),
                     string.Format(ModConfig.LogHUDNotificationsTemplate.Value,
                                           cat, headline, small)
                 );
