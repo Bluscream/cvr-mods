@@ -11,17 +11,17 @@ using ABI_RC.Systems.IK;
 using System.Diagnostics;
 
 namespace Bluscream.MoreChatNotifications;
-public class MoreChatNotifications : MelonMod {
+public class Mod : MelonMod {
     public static MelonLogger.Instance Logger;
     //public static object DelayCoroutine = null;
     public static DateTime LastWorldTime = DateTime.Now;
     public static float LastWorldPercent = 0f;
     private static bool FirstWorldLoaded = false;
-    private static Process VirtualDesktopProcess;
 
     public override void OnInitializeMelon() {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
+        Modules.VirtualDesktop.Initialize();
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
             Logger.BigError("Chatbox mod not found! Make sure it is properly installed");
@@ -45,24 +45,7 @@ public class MoreChatNotifications : MelonMod {
     internal static void OnFirstWorldLoaded() {
         if (!ModConfig.EnableMod.Value) return;
         Logger.Msg("OnFirstWorldLoaded");
-        if (ModConfig.VirtualDesktopDisconnected.Value) CheckForVirtualDesktop();
-    }
-
-    private static void CheckForVirtualDesktop() {
-        if (!ModConfig.EnableMod.Value || !ModConfig.VirtualDesktopDisconnected.Value) return;
-        VirtualDesktopProcess = Process.GetProcessesByName("VirtualDesktop.Server").FirstOrDefault();
-        if (VirtualDesktopProcess != null) {
-            Logger.Msg($"VirtualDesktopProcess found: {VirtualDesktopProcess.Id}");
-            VirtualDesktopProcess.Exited += VirtualDesktopProcess_Exited;
-        }
-    }
-
-    private static void VirtualDesktopProcess_Exited(object sender, EventArgs e) {
-        if (!ModConfig.EnableMod.Value || !ModConfig.VirtualDesktopDisconnected.Value) return;
-        Logger.Msg("VirtualDesktopProcess_Exited");
-        if (VRModeSwitchManager.Instance.IsInXR())
-            SendChatNotification("VirtualDesktop Disconnected");
-
+        if (ModConfig.VirtualDesktopDisconnected.Value) Modules.VirtualDesktop.CheckForVirtualDesktop();
     }
 
     [HarmonyPatch]

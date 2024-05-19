@@ -12,7 +12,7 @@ using MelonLoader;
 [assembly: AssemblyProduct(AssemblyInfoParams.Name)]
 
 [assembly: MelonInfo(
-    typeof(MoreChatNotifications),
+    typeof(Mod),
     AssemblyInfoParams.Name,
     AssemblyInfoParams.Version,
     AssemblyInfoParams.Author,

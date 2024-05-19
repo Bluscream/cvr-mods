@@ -50,7 +50,7 @@ public static class ModConfig {
 
         InstanceSwitchNotificationsEnabled = _melonCategory.CreateEntry("Instance switching notifications", true,
             description: "Will automatically send ChatBox notifications while when you switch to a different instance");
-        InstanceSwitchNotificationsTemplate = _melonCategory.CreateEntry("Instance switching template", "Switching instance",
+        InstanceSwitchNotificationsTemplate = _melonCategory.CreateEntry("Instance switching template", "Switching Instance",
             description: "Template for instance switching notifications ({0}=instanceId,{1}=worldId,{2}=isHome)");
         InstanceSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("Instance switching notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
