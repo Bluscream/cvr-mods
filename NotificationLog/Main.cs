@@ -6,7 +6,6 @@ using ABI_RC.Systems.Gravity;
 using ABI_RC.Systems.Movement;
 using HarmonyLib;
 using MelonLoader;
-using NotificationLog;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
