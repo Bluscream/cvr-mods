@@ -27,7 +27,7 @@ using MelonLoader;
 
 namespace Bluscream.MoreChatNotifications.Properties;
 internal static class AssemblyInfoParams {
-    public const string Name = "More Chat Notifications";
+    public const string Name = "MoreChatNotifications";
     public const string Version = "1.0.0";
     public const string Author = "Bluscream";
 }

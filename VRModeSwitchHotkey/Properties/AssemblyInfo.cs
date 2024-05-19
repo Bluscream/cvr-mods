@@ -27,7 +27,7 @@ using MelonLoader;
 
 namespace Bluscream.VRModeSwitchHotkey.Properties;
 internal static class AssemblyInfoParams {
-    public const string Name = "VR Mode Switch Hotkey";
+    public const string Name = "VRModeSwitchHotkey";
     public const string Version = "1.0.0";
     public const string Author = "Bluscream";
 }

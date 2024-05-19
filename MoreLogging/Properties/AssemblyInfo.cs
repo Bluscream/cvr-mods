@@ -27,7 +27,7 @@ using MelonLoader;
 
 namespace Bluscream.MoreLogging.Properties;
 internal static class AssemblyInfoParams {
-    public const string Name = "More Logging";
-    public const string Version = "1.0.1";
+    public const string Name = "MoreLogging";
+    public const string Version = "1.0.2";
     public const string Author = "Bluscream";
 }

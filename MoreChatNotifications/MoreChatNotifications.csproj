@@ -12,7 +12,7 @@
     <!--Exec Command="&quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" /-->
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="&quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />
+    <Exec Command="rem &quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />
   </Target>
   <ItemGroup>
     <ProjectReference Include="..\..\Kafe_CVR_Mods\ChatBox\ChatBox.csproj" />

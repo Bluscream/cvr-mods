@@ -2,7 +2,7 @@
 	"$schema": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
 	"_id": 204,
 	"name": "MoreLogging",
-	"modversion": "1.0.1",
+	"modversion": "1.0.2",
 	"gameversion": "2024r175",
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
@@ -15,9 +15,9 @@
 		"chat",
 		"notification"
 	],
-	"requirements": [ "[ChatBox (Optional)](https://github.com/kafeijao/Kafe_CVR_Mods/tree/master/ChatBox)" ],
+	"requirements": [ "[ChatBox (Optional)](https://github.com/kafeijao/Kafe_CVR_Mods/tree/master/ChatBox#chatbox)" ],
 	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/latest/download/MoreLogging.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/MoreLogging",
-	"changelog": "- Initial release.",
+	"changelog": "- Initial release\n- Rebranding from `NotificationLog` to `MoreLogging`\n",
 	"embedcolor": "006CFF"
 }

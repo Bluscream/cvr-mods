@@ -2,22 +2,22 @@
   {
     "_id": 204,
     "name": "NotificationLog",
-    "modversion": "1.0.0",
+    "modversion": "1.0.1",
     "gameversion": "2024r175",
     "loaderversion": "v0.6.1",
     "modtype": "Mod",
     "author": "Bluscream",
-    "description": "Simple `Mod` that logs HUD Notifications to your MelonLoader console and log\n\n",
+    "description": "Simple highly customizable `Mod` that logs\n\n- HUD Notifications\n- Instance Joins\n- Player joins\n- Player leaves\n- Prop Spawns\n\nto your MelonLoader console and log\n\n",
     "searchtags": [
       "logger",
       "log",
       "hud"
     ],
     "requirements": [],
-    "downloadlink": "https://api.cvrmg.com/v1/mods/files/204/1/NotificationLog.dll",
+    "downloadlink": "https://api.cvrmg.com/v1/mods/files/204/3/NotificationLog.dll",
     "sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/NotificationLog",
     "changelog": "- Initial release.",
-    "embedcolor": "16C60C"
+    "embedcolor": "006CFF"
   },
   {
     "_id": 206,
@@ -27,17 +27,17 @@
     "loaderversion": "v0.6.1",
     "modtype": "Mod",
     "author": "Bluscream",
-    "description": "Simple `Mod` that logs allows you to auto-set certain settings (like URL whitelist) when you join public instances\n\n",
+    "description": "Simple `Mod` that allows you to auto-set certain settings like\n\n- URL Whitelist\n- Advanced Safety\n- Discord/Steam Rich Presence\n\nwhen you join public instances\n\nIf you have recommendations on other settings that should be included, leave them on [Github](https://github.com/Bluscream/cvr-mods/issues/new) or [Discord](https://discord.com/users/467777925790564352) \n\n",
     "searchtags": [
       "safety",
       "security",
       "automation"
     ],
     "requirements": [],
-    "downloadlink": "https://api.cvrmg.com/v1/mods/files/206/1/PublicSafety.dll",
+    "downloadlink": "https://api.cvrmg.com/v1/mods/files/206/3/PublicSafety.dll",
     "sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PublicSafety",
     "changelog": "- Initial release.",
-    "embedcolor": "16C60C"
+    "embedcolor": "006CFF"
   },
   {
     "_id": 207,
@@ -47,16 +47,16 @@
     "loaderversion": "v0.6.1",
     "modtype": "Mod",
     "author": "Bluscream",
-    "description": "Slightly less simple `Mod` that allows you to auto-spawn certain props when you join a instance\n\nCheck the [Github Readme](https://github.com/Bluscream/cvr-mods/blob/master/PublicSafety/README.md) for more infos.\n\n",
+    "description": "Slightly less simple `Mod` that allows you to auto-spawn certain props when you join a instance\n\nCheck the [Github Readme](https://github.com/Bluscream/cvr-mods/blob/master/PropSpawner/README.md) for more infos.\n\n",
     "searchtags": [
       "automation",
       "prop",
       "props"
     ],
     "requirements": [],
-    "downloadlink": "https://api.cvrmg.com/v1/mods/files/207/1/PropSpawner.dll",
+    "downloadlink": "https://api.cvrmg.com/v1/mods/files/207/5/PropSpawner.dll",
     "sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PropSpawner",
     "changelog": "- Initial release.",
-    "embedcolor": "16C60C"
+    "embedcolor": "006CFF"
   }
 ]
