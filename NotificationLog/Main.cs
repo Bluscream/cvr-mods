@@ -26,7 +26,7 @@ public class SimpleLog : MelonMod {
             var tag = player.userStaffTag;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userRank;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userClanTag;
-            NotificationLogger.Msg(ModConfig.LogPlayerJoinColorARGB.Value.ToColor(),
+            Logger.Msg(ModConfig.LogPlayerJoinColorARGB.Value.ToColor(),
                 string.Format(ModConfig.LogPlayerJoinTemplate.Value,
                                       player.userName, tag, player.ownerId));
         });
