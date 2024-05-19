@@ -58,7 +58,7 @@ public class Mod : MelonMod {
             if (!ModConfig.EnableMod.Value || !ModConfig.WorldDownloadNotificationsEnabled.Value || reset || stage != 1 || value == LastWorldPercent) return; // stage 1 = download
             //if (DelayCoroutine != null) MelonCoroutines.Stop(DelayCoroutine);
             var now = DateTime.Now;
-            if (now - LastWorldTime > ModConfig.WorldDownloadNotificationsInterval.Value) { // value == 0 || 
+            if ((now - LastWorldTime).TotalMilliseconds > ModConfig.WorldDownloadNotificationsIntervalMS.Value) { // value == 0 || 
                 SendChatNotification(
                     text: string.Format(ModConfig.WorldDownloadNotificationsTemplate.Value, value.ToString())
                 );

@@ -6,6 +6,7 @@ using System.Diagnostics;
 namespace Bluscream.MoreChatNotifications.Modules;
 
 internal class VirtualDesktop {
+    private protected const string VDServerProcessName = "VirtualDesktop.Server.exe";
     private static Process VirtualDesktopProcess;
 
     public static void Initialize() {
@@ -14,7 +15,7 @@ internal class VirtualDesktop {
 
     internal static void CheckForVirtualDesktop() {
         if (!ModConfig.EnableMod.Value || !ModuleConfig.VirtualDesktopDisconnected.Value) return;
-        VirtualDesktopProcess = Process.GetProcessesByName("VirtualDesktop.Server").FirstOrDefault();
+        VirtualDesktopProcess = Process.GetProcessesByName(VDServerProcessName).FirstOrDefault();
         if (VirtualDesktopProcess != null) {
             Mod.Logger.Msg($"VirtualDesktopProcess found: {VirtualDesktopProcess.Id}");
             VirtualDesktopProcess.Exited += VirtualDesktopProcess_Exited;

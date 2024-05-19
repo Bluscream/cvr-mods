@@ -8,8 +8,8 @@ public static class ModConfig {
 
     internal static MelonPreferences_Entry<bool> WorldDownloadNotificationsEnabled;
     internal static MelonPreferences_Entry<string> WorldDownloadNotificationsTemplate;
-    internal static MelonPreferences_Entry<TimeSpan> WorldDownloadNotificationsInterval;
-    private static readonly TimeSpan WorldDownloadNotificationsIntervalMin = TimeSpan.FromMilliseconds(500);
+    internal static MelonPreferences_Entry<int> WorldDownloadNotificationsIntervalMS;
+    private static readonly int WorldDownloadNotificationsIntervalMinMS = 250;
 
     internal static MelonPreferences_Entry<bool> InstanceSwitchNotificationsEnabled;
     internal static MelonPreferences_Entry<string> InstanceSwitchNotificationsTemplate;
@@ -50,10 +50,10 @@ public static class ModConfig {
             description: "Will automatically send ChatBox notifications while you download a world");
         WorldDownloadNotificationsTemplate = _melonCategory.CreateEntry("World download template", "Loading World ({0}%)",
             description: "Template for world download notifications ({0}=percentage)");
-        WorldDownloadNotificationsInterval = _melonCategory.CreateEntry("World download interval", TimeSpan.FromSeconds(1),
-            description: "Delay to use between update intervals (min: 500ms)");
-        if (WorldDownloadNotificationsInterval.Value < WorldDownloadNotificationsIntervalMin)
-            WorldDownloadNotificationsInterval.Value = WorldDownloadNotificationsIntervalMin;
+        WorldDownloadNotificationsIntervalMS = _melonCategory.CreateEntry("World download interval (ms)", 1000,
+            description: "Delay to use between update intervals in milliseconds (min: 500ms)");
+        if (WorldDownloadNotificationsIntervalMS.Value < WorldDownloadNotificationsIntervalMinMS)
+            WorldDownloadNotificationsIntervalMS.Value = WorldDownloadNotificationsIntervalMinMS;
 
         InstanceSwitchNotificationsEnabled = _melonCategory.CreateEntry("Instance switching notifications", true,
             description: "Will automatically send ChatBox notifications while when you switch to a different instance");
@@ -80,20 +80,20 @@ public static class ModConfig {
 
         FBTModeSwitchNotificationsEnabled = _melonCategory.CreateEntry("FBT Mode switch notifications", true,
             description: "Will automatically send ChatBox notifications when you switch between FBT/Halfbody mode");
-        FBTModeSwitchNotificationsTemplateFBT = _melonCategory.CreateEntry("FBT mode switch template", "Switched to FBT",
+        FBTModeSwitchNotificationsTemplateFBT = _melonCategory.CreateEntry("FBT switch template", "Switched to FBT",
             description: "Template for FBT mode switch notifications");
-        FBTModeSwitchNotificationsTemplateHalfBody = _melonCategory.CreateEntry("Halfbody mode switch template", "Switched to Halfbody",
+        FBTModeSwitchNotificationsTemplateHalfBody = _melonCategory.CreateEntry("Halfbody switch template", "Switched to Halfbody",
             description: "Template for Halfbody mode switch notifications");
         FBTModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("FBT Mode switch notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
-        VoiceConnectionLostNotificationEnabled = _melonCategory.CreateEntry("Voice connection lost notifications", false,
+        VoiceConnectionLostNotificationEnabled = _melonCategory.CreateEntry("Voice lost notifications", false,
             description: "Will automatically send ChatBox notifications when you loose connection to the Voice System (preferably use the VoiceConnectionStatus mod instead)");
-        VoiceConnectionLostNotificationTemplateLost = _melonCategory.CreateEntry("Voice connection lost template", "Voice Disconnected",
-            description: "Template for voice connection lost notifications");
-        VoiceConnectionLostNotificationTemplateGained = _melonCategory.CreateEntry("Voice connection regained template", "Voice Connected",
+        VoiceConnectionLostNotificationTemplateLost = _melonCategory.CreateEntry("Voice lost template", "Voice Disconnected",
+            description: "Template for voice lost notifications");
+        VoiceConnectionLostNotificationTemplateGained = _melonCategory.CreateEntry("Voice regained template", "Voice Connected",
             description: "Template for voice connection regained notifications");
-        VoiceConnectionLostNotificationSoundEnabled = _melonCategory.CreateEntry("Voice connection lost notification sound", false,
+        VoiceConnectionLostNotificationSoundEnabled = _melonCategory.CreateEntry("Voice lost notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
         MicrophoneNotificationEnabled = _melonCategory.CreateEntry("Microphone notifications", false,
