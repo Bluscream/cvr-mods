@@ -1,8 +1,8 @@
 ﻿using MelonLoader;
-using Bluscream.SimpleLog.Properties;
+using Bluscream.MoreLogging.Properties;
 using NotificationLog;
 
-namespace Bluscream.SimpleLog.Integrations;
+namespace Bluscream.MoreLogging.Integrations;
 internal class ChatBox {
     public static MelonLogger.Instance Logger;
     internal class UiEvent {

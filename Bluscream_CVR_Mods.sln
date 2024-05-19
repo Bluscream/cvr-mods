@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleLog", "NotificationLog\SimpleLog.csproj", "{66F27842-9B36-4F5E-AAFB-FDFBEB3B1AA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoreLogging", "NotificationLog\MoreLogging.csproj", "{66F27842-9B36-4F5E-AAFB-FDFBEB3B1AA5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BC51CB36-B1D3-4631-8F8E-7EF9731682F3}"
 	ProjectSection(SolutionItems) = preProject
 		mods.json = mods.json
+		mod.schema.json = mod.schema.json
+		mods.schema.json = mods.schema.json
 		README.md = README.md
 		NotificationLog\README.md = NotificationLog\README.md
 		PropSpawner\README.md = PropSpawner\README.md

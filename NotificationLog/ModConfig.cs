@@ -1,9 +1,9 @@
-﻿using Bluscream.SimpleLog.Properties;
+﻿using Bluscream.MoreLogging.Properties;
 using MelonLoader;
 using System.Drawing;
 using System.Text.RegularExpressions;
 
-namespace Bluscream.SimpleLog;
+namespace Bluscream.MoreLogging;
 
 internal static class RankColor {
     static Color Blocked = Color.FromArgb(155, 255, 255, 255); // dark grey

@@ -1,20 +1,23 @@
 {
+	"$schema": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
 	"_id": 204,
-	"name": "Simple Log",
+	"name": "MoreLogging",
 	"modversion": "1.0.1",
 	"gameversion": "2024r175",
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple highly customizable `Mod` that logs\n\n- HUD Notifications\n- Instance Joins\n- Player joins\n- Player leaves\n- Prop Spawns\n\nto your MelonLoader console and log\n\n",
+	"description": "Simple highly customizable `Mod` that logs\n\n- HUD Notifications\n- Instance Joins\n- Player joins\n- Player leaves\n- Prop Spawns\n- ChatBox Messages\n\nto your MelonLoader console and log\n\n",
 	"searchtags": [
 		"logger",
 		"log",
-		"hud"
+		"hud",
+		"chat",
+		"notification"
 	],
-	"requirements": [],
-	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F12%2F2024/SimpleLog.dll",
-	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/SimpleLog",
+	"requirements": [ "[ChatBox (Optional)](https://github.com/kafeijao/Kafe_CVR_Mods/tree/master/ChatBox)" ],
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download//MoreLogging.dll",
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/MoreLogging",
 	"changelog": "- Initial release.",
 	"embedcolor": "006CFF"
 }

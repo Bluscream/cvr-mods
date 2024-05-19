@@ -10,9 +10,9 @@ using NotificationLog;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Bluscream.SimpleLog;
+namespace Bluscream.MoreLogging;
 
-public class SimpleLog : MelonMod {
+public class MoreLogging : MelonMod {
     public static MelonLogger.Instance Logger;
     public static MelonLogger.Instance NotificationLogger;
 
@@ -42,9 +42,9 @@ public class SimpleLog : MelonMod {
 
         CVRGameEventSystem.Instance.OnConnected.AddListener(instanceId => {
             if (!ModConfig.EnableMod.Value || !ModConfig.LogInstanceJoins.Value) return;
-            var instancePrivacy = ABI_RC.Core.Savior.MetaPort.Instance.CurrentInstancePrivacy;
+            var instancePrivacy = MetaPort.Instance.CurrentInstancePrivacy;
             var scene = SceneManager.GetActiveScene();
-            var playerCount = ABI_RC.Core.Player.CVRPlayerManager.Instance.NetworkPlayers.Count;
+            var playerCount = CVRPlayerManager.Instance.NetworkPlayers.Count;
             var worldId = MetaPort.Instance.CurrentWorldId;
             var instanceName = MetaPort.Instance.CurrentInstanceName;
             var worldName = instanceName.Split(" (#").First();
@@ -63,7 +63,7 @@ public class SimpleLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecieved)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(MoreLogging), nameof(HUDNotificationRecieved)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropText", new[] {
@@ -71,7 +71,7 @@ public class SimpleLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(MoreLogging), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropTextImmediate", new[] {
@@ -79,7 +79,7 @@ public class SimpleLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(MoreLogging), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropTextLong", new[] {
@@ -87,7 +87,7 @@ public class SimpleLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(MoreLogging), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CohtmlHud"), "ViewDropTextLonger", new[] {
@@ -95,7 +95,7 @@ public class SimpleLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(MoreLogging), nameof(HUDNotificationRecievedCat)))
         );
         HarmonyInstance.Patch(
             AccessTools.Method(AccessTools.TypeByName("CVRSyncHelper"), "SpawnProp", new[] {
@@ -103,7 +103,7 @@ public class SimpleLog : MelonMod {
                 typeof(string), // headline
                 typeof(string) // small
             }),
-            prefix: new HarmonyMethod(AccessTools.Method(typeof(SimpleLog), nameof(HUDNotificationRecievedCat)))
+            prefix: new HarmonyMethod(AccessTools.Method(typeof(MoreLogging), nameof(HUDNotificationRecievedCat)))
         );
         #endregion Patches
         #region Integrations

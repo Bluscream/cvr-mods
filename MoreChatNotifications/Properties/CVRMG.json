@@ -1,4 +1,5 @@
 {
+	"$schema": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
 	"_id": -1,
 	"name": "MoreChatNotifications",
 	"modversion": "1.0.0",
@@ -6,12 +7,13 @@
 	"loaderversion": "v0.6.1",
 	"modtype": "Mod",
 	"author": "Bluscream",
-	"description": "Simple `Mod` that allows you to  \n\n",
+	"description": "Simple `Mod` that allows you to send additional notifications to other players via the ChatBox mod like\n- World Download Percentage\n -Instance Switching\n -Instance Rejoining\n -VR Mode Switching\n -FBT Switching\n\n",
 	"searchtags": [
+		"chat",
 		"chatbox",
 		"notifications"
 	],
-	"requirements": [],
+	"requirements": [ "[ChatBox](https://github.com/kafeijao/Kafe_CVR_Mods/tree/master/ChatBox)" ],
 	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download//MoreChatNotifications.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/MoreChatNotifications",
 	"changelog": "- Initial release.",
