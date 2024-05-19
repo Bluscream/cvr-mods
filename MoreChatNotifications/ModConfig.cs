@@ -51,7 +51,7 @@ public static class ModConfig {
         WorldDownloadNotificationsTemplate = _melonCategory.CreateEntry("World download template", "Loading World ({0}%)",
             description: "Template for world download notifications ({0}=percentage)");
         WorldDownloadNotificationsIntervalMS = _melonCategory.CreateEntry("World download interval (ms)", 1000,
-            description: "Delay to use between update intervals in milliseconds (min: 500ms)");
+            description: $"Delay to use between update intervals in milliseconds (min: {WorldDownloadNotificationsIntervalMinMS}ms)");
         if (WorldDownloadNotificationsIntervalMS.Value < WorldDownloadNotificationsIntervalMinMS)
             WorldDownloadNotificationsIntervalMS.Value = WorldDownloadNotificationsIntervalMinMS;
 
