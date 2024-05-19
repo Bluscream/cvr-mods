@@ -40,10 +40,13 @@ internal class ChatBox {
         if (!ModConfig.EnableMod.Value) return;
         var isPlayerMessage = msg.DisplayOnChatBox && msg.Source != Kafe.ChatBox.API.MessageSource.Mod;
         var senderName = Utils.GetPlayerNameById(msg.SenderGuid);
-        if (IntegrationConfig.LogIncomingChat.Value && isPlayerMessage) {
-            Logger.Msg(IntegrationConfig.LogIncomingChatColorARGB.Value.ToColor(),
-                string.Format(IntegrationConfig.LogIncomingChatTemplate.Value,
-                                      msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
+        if (isPlayerMessage) {
+            if (!msg.TriggerNotification && IntegrationConfig.LogIncomingChatToHUD.Value) Utils.HUDNotify(senderName, msg.Message, "Chat", 5f);
+            if (IntegrationConfig.LogIncomingChat.Value) {
+                Logger.Msg(IntegrationConfig.LogIncomingChatColorARGB.Value.ToColor(),
+                    string.Format(IntegrationConfig.LogIncomingChatTemplate.Value,
+                                          msg.Message, senderName, msg.SenderGuid, msg.Source, msg.ModName));
+            }
         } else if (IntegrationConfig.LogIncomingMod.Value && !isPlayerMessage) {
             Logger.Msg(IntegrationConfig.LogIncomingModColorARGB.Value.ToColor(),
                 string.Format(IntegrationConfig.LogIncomingModTemplate.Value,
@@ -58,6 +61,7 @@ internal class ChatBox {
         internal static MelonPreferences_Entry<List<ushort>> LoggerColorARGB;
 
         internal static MelonPreferences_Entry<bool> LogIncomingChat;
+        internal static MelonPreferences_Entry<bool> LogIncomingChatToHUD;
         internal static MelonPreferences_Entry<List<ushort>> LogIncomingChatColorARGB;
         internal static MelonPreferences_Entry<string> LogIncomingChatTemplate;
 
@@ -88,6 +92,8 @@ internal class ChatBox {
                 description: "The color to use in the MelonLoader Console when logging incoming chat messages");
             LogIncomingChatTemplate = _melonCategory.CreateEntry("Incoming chat messages template", "Message from {1}: \"{0}\"",
                 description: "The template to use for logging incoming chat messages (The following replacements are available: {0}=message,{1}=userName,{2}=userId,{3}=source,{4}=modname)");
+            LogIncomingChatToHUD = _melonCategory.CreateEntry("Incoming chat to HUD Notification", false,
+                description: $"Whether to show incoming chat messages as HUD notifications or not (does not require enabling {LogIncomingChat.DisplayName}");
 
             LogIncomingMod = _melonCategory.CreateEntry("Log incoming mod messages", false,
                 description: "Whether to log incoming mod messages to MelonLoader console/log or not.");
