@@ -6,10 +6,11 @@ using ABI_RC.Core.Player;
 using ABI_RC.Systems.VRModeSwitch;
 using ABI_RC.Core.Base;
 using ABI_RC.Core.Savior;
+using ABI_RC.Systems.IK.SubSystems;
+using ABI_RC.Systems.IK;
 
 namespace Bluscream.MoreChatNotifications;
 public class MoreChatNotifications : MelonMod {
-    private static protected readonly TimeSpan ms500 = TimeSpan.FromMilliseconds(500);
     public static MelonLogger.Instance Logger;
     //public static object DelayCoroutine = null;
     public static DateTime LastWorldTime = DateTime.Now;
@@ -52,7 +53,7 @@ public class MoreChatNotifications : MelonMod {
             if (!ModConfig.EnableMod.Value || !ModConfig.WorldDownloadNotificationsEnabled.Value || reset || stage != 1 || value == LastWorldPercent) return; // stage 1 = download
             //if (DelayCoroutine != null) MelonCoroutines.Stop(DelayCoroutine);
             var now = DateTime.Now;
-            if (now - LastWorldTime > ms500) { // value == 0 || 
+            if (now - LastWorldTime > ModConfig.WorldDownloadNotificationsInterval.Value) { // value == 0 || 
                 CommonMethods.SendChatNotification(
                     text: string.Format(ModConfig.WorldDownloadNotificationsTemplate.Value, value.ToString())
                 );
@@ -80,6 +81,15 @@ public class MoreChatNotifications : MelonMod {
                     sendSoundNotification: ModConfig.InstanceRejoinNotificationsSoundEnabled.Value
                 );
             }
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(BodySystem), nameof(BodySystem.ToggleFullBody))]
+        internal static void AfterToggleFullBody() {
+            if (!ModConfig.EnableMod.Value || !ModConfig.FBTModeSwitchNotificationsEnabled.Value) return;
+            CommonMethods.SendChatNotification(
+                text: IKSystem.Instance.BodySystem.FullBodyEnabled ? ModConfig.FBTModeSwitchNotificationsTemplateFBT.Value : ModConfig.FBTModeSwitchNotificationsTemplateHalfBody,
+                sendSoundNotification: ModConfig.FBTModeSwitchNotificationsSoundEnabled.Value
+            );
         }
     }
 }

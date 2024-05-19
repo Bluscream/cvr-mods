@@ -6,16 +6,17 @@ using ABI_RC.Systems.Gravity;
 using ABI_RC.Systems.Movement;
 using HarmonyLib;
 using MelonLoader;
+using NotificationLog;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static Cinemachine.CinemachineOrbitalTransposer;
 
 namespace Bluscream.NotificationLog;
 
 public class NotificationLog : MelonMod {
+    public static MelonLogger.Instance Logger;
 
     public override void OnInitializeMelon() {
-
+        Logger = new MelonLogger.Instance("Notification", System.Drawing.Color.OrangeRed);
         ModConfig.InitializeMelonPrefs();
 
         CVRGameEventSystem.Player.OnJoin.AddListener(player => {
@@ -23,7 +24,7 @@ public class NotificationLog : MelonMod {
             var tag = player.userStaffTag;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userRank;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userClanTag;
-            MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogPlayerJoinColorARGB.Value),
+            Logger.Msg(ModConfig.LogPlayerJoinColorARGB.Value.ToColor(),
                 string.Format(ModConfig.LogPlayerJoinTemplate.Value,
                                       player.userName, tag, player.ownerId));
         });
@@ -32,7 +33,7 @@ public class NotificationLog : MelonMod {
             var tag = player.userStaffTag;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userRank;
             if (string.IsNullOrWhiteSpace(tag)) tag = player.userClanTag;
-            MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogPlayerLeaveColorARGB.Value),
+            Logger.Msg(ModConfig.LogPlayerLeaveColorARGB.Value.ToColor(),
                 string.Format(ModConfig.LogPlayerLeaveTemplate.Value,
                                       player.userName, tag, player.ownerId));
         });
@@ -45,13 +46,13 @@ public class NotificationLog : MelonMod {
             var worldId = MetaPort.Instance.CurrentWorldId;
             var instanceName = MetaPort.Instance.CurrentInstanceName;
             var worldName = instanceName.Split(" (#").First();
-            MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogInstanceJoinsColorARGB.Value),
+            Logger.Msg(ModConfig.LogInstanceJoinsColorARGB.Value.ToColor(),
                 string.Format(ModConfig.LogInstanceJoinsTemplate.Value,
                                       instanceId, instanceName, instancePrivacy, playerCount, scene.name, scene.path, scene.buildIndex, worldId, worldName));
         });
 
         //CVRGameEventSystem.World.OnLoad.AddListener(world => {
-        //    MelonLogger.MsgDirect($"[CVRGameEventSystem.World.OnLoad] {CVRPlayerManager.Instance.NetworkPlayers.Count} {world} Type: {MetaPort.Instance.CurrentInstancePrivacy}");
+        //    Logger.Msg($"[CVRGameEventSystem.World.OnLoad] {CVRPlayerManager.Instance.NetworkPlayers.Count} {world} Type: {MetaPort.Instance.CurrentInstancePrivacy}");
         //});
 
         HarmonyInstance.Patch(
@@ -101,6 +102,13 @@ public class NotificationLog : MelonMod {
             }),
             prefix: new HarmonyMethod(AccessTools.Method(typeof(NotificationLog), nameof(HUDNotificationRecievedCat)))
         );
+
+        if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") != null) {
+            Logger.Msg("Chatbox mod found! Enabling Integration...");
+            Integrations.ChatBox.Initialize();
+        } else {
+            Logger.Warning("Chatbox mod not found! Make sure it is properly installed.");
+        }
     }
     private static void HUDNotificationRecieved(string headline, string small) => HUDNotificationRecievedCat(null, headline, small);
     private static void HUDNotificationRecievedCat(string cat, string headline, string small) {
@@ -112,7 +120,7 @@ public class NotificationLog : MelonMod {
                     headline = headline?.Replace("\n", " ").Trim();
                     small = small?.Replace("\n", " ").Trim();
                 }
-                MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogHUDNotificationsColorARGB.Value),
+                Logger.Msg(ModConfig.LogHUDNotificationsColorARGB.Value.ToColor(),
                     string.Format(ModConfig.LogHUDNotificationsTemplate.Value,
                                           cat, headline, small)
                 );
@@ -136,7 +144,7 @@ public class NotificationLog : MelonMod {
                         vector = BetterBetterCharacterController.Instance.GetGravityDirection();
                     }
                     Quaternion rot = Quaternion.LookRotation(Vector3.ProjectOnPlane((PlayerSetup.Instance.CharacterController.RotationPivot.position - new Vector3(posX, posY, posZ)).normalized, -vector), -vector);
-                    MelonLogger.MsgDirect(ModConfig.GetColor(ModConfig.LogPropSpawnsColorARGB.Value),
+                    Logger.Msg(ModConfig.LogPropSpawnsColorARGB.Value.ToColor(),
                         string.Format(ModConfig.LogPropSpawnsTemplate.Value,
                                               propGuid, $"X:{posX} Y:{posY} Z:{posZ}", $"X:{rot.x} Y:{rot.y} Z:{rot.z}")
                     );
@@ -150,20 +158,20 @@ public class NotificationLog : MelonMod {
 //        [HarmonyPrefix]
 //        [HarmonyPatch(typeof(CVRWorld), nameof(CVRWorld.Start))]
 //        public static void Before_CVRWorld_Start() {
-//            MelonLogger.Msg($"[Before_CVRWorld_Start] Type: {MetaPort.Instance.CurrentInstancePrivacy}, CurrentWorldId: {MetaPort.Instance.CurrentWorldId}, CurrentInstanceId: {MetaPort.Instance.CurrentInstanceId}, Name: {SceneManager.GetActiveScene().name}");
+//            Logger.Msg($"[Before_CVRWorld_Start] Type: {MetaPort.Instance.CurrentInstancePrivacy}, CurrentWorldId: {MetaPort.Instance.CurrentWorldId}, CurrentInstanceId: {MetaPort.Instance.CurrentInstanceId}, Name: {SceneManager.GetActiveScene().name}");
 //        }
 
 //        [HarmonyPostfix]
 //        [HarmonyPatch(typeof(CVRWorld), nameof(CVRWorld.Start))]
 //        public static void After_CVRWorld_Start() {
-//            MelonLogger.Msg($"[After_CVRWorld_Start] Type: {MetaPort.Instance.CurrentInstancePrivacy}, CurrentWorldId: {MetaPort.Instance.CurrentWorldId}, CurrentInstanceId: {MetaPort.Instance.CurrentInstanceId}, Name: {SceneManager.GetActiveScene().name}");
+//            Logger.Msg($"[After_CVRWorld_Start] Type: {MetaPort.Instance.CurrentInstancePrivacy}, CurrentWorldId: {MetaPort.Instance.CurrentWorldId}, CurrentInstanceId: {MetaPort.Instance.CurrentInstanceId}, Name: {SceneManager.GetActiveScene().name}");
 //        }
 
 //        [HarmonyPostfix]
 //        [HarmonyPatch(typeof(Content), nameof(Content.LoadIntoWorld))]
 //        public static void After_Content_LoadIntoWorld() {
 //            try {
-//                MelonLogger.Msg($"[After_Content_LoadIntoWorld] Type: {MetaPort.Instance.CurrentInstancePrivacy}, CurrentWorldId: {MetaPort.Instance.CurrentWorldId}, CurrentInstanceId: {MetaPort.Instance.CurrentInstanceId}, Name: {SceneManager.GetActiveScene().name}");
+//                Logger.Msg($"[After_Content_LoadIntoWorld] Type: {MetaPort.Instance.CurrentInstancePrivacy}, CurrentWorldId: {MetaPort.Instance.CurrentWorldId}, CurrentInstanceId: {MetaPort.Instance.CurrentInstanceId}, Name: {SceneManager.GetActiveScene().name}");
 //            } catch (Exception e) {
 //                MelonLogger.Error($"Error during the patched function {nameof(After_Content_LoadIntoWorld)}");
 //                MelonLogger.Error(e);

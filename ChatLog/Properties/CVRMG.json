@@ -1,0 +1,21 @@
+{
+	"_id": -1,
+	"name": "ChatLog",
+	"modversion": "1.0.0",
+	"gameversion": "2024r175",
+	"loaderversion": "v0.6.1",
+	"modtype": "Mod",
+	"author": "Bluscream",
+	"description": "Simple `Mod` that logs Chat Messages to your MelonLoader console and log\n\n",
+	"searchtags": [
+		"logger",
+		"log",
+		"chat",
+		"chatbox"
+	],
+	"requirements": [],
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download//ChatLog.dll",
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/ChatLog",
+	"changelog": "- Initial release.",
+	"embedcolor": "006CFF"
+}

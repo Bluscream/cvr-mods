@@ -8,6 +8,8 @@ public static class ModConfig {
 
     internal static MelonPreferences_Entry<bool> WorldDownloadNotificationsEnabled;
     internal static MelonPreferences_Entry<string> WorldDownloadNotificationsTemplate;
+    internal static MelonPreferences_Entry<TimeSpan> WorldDownloadNotificationsInterval;
+    private static readonly TimeSpan WorldDownloadNotificationsIntervalMin = TimeSpan.FromMilliseconds(500);
 
     internal static MelonPreferences_Entry<bool> InstanceSwitchNotificationsEnabled;
     internal static MelonPreferences_Entry<string> InstanceSwitchNotificationsTemplate;
@@ -22,38 +24,56 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<string> VRModeSwitchNotificationsTemplateDesktop;
     internal static MelonPreferences_Entry<bool> VRModeSwitchNotificationsSoundEnabled;
 
+    internal static MelonPreferences_Entry<bool> FBTModeSwitchNotificationsEnabled;
+    internal static MelonPreferences_Entry<string> FBTModeSwitchNotificationsTemplateFBT;
+    internal static MelonPreferences_Entry<string> FBTModeSwitchNotificationsTemplateHalfBody;
+    internal static MelonPreferences_Entry<bool> FBTModeSwitchNotificationsSoundEnabled;
+
 
     public static void InitializeMelonPrefs() {
         _melonCategory = MelonPreferences.CreateCategory(AssemblyInfoParams.Name);
         EnableMod = _melonCategory.CreateEntry("Enable Mod", true,
             description: "The mod will do nothing while disabled");
 
-        WorldDownloadNotificationsEnabled = _melonCategory.CreateEntry("Enable world download notifications", false,
+        WorldDownloadNotificationsEnabled = _melonCategory.CreateEntry("World download notifications", false,
             description: "Will automatically send ChatBox notifications while you download a world");
         WorldDownloadNotificationsTemplate = _melonCategory.CreateEntry("World download template", "Loading World ({0}%)",
             description: "Template for world download notifications ({0}=percentage)");
+        WorldDownloadNotificationsInterval = _melonCategory.CreateEntry("World download interval", TimeSpan.FromSeconds(1),
+            description: "Delay to use between update intervals (min: 500ms)");
+        if (WorldDownloadNotificationsInterval.Value < WorldDownloadNotificationsIntervalMin)
+            WorldDownloadNotificationsInterval.Value = WorldDownloadNotificationsIntervalMin;
 
-        InstanceSwitchNotificationsEnabled = _melonCategory.CreateEntry("Enable instance switching notifications", true,
+        InstanceSwitchNotificationsEnabled = _melonCategory.CreateEntry("Instance switching notifications", true,
             description: "Will automatically send ChatBox notifications while when you switch to a different instance");
         InstanceSwitchNotificationsTemplate = _melonCategory.CreateEntry("Instance switching template", "Switching instance",
             description: "Template for instance switching notifications ({0}=instanceId,{1}=worldId,{2}=isHome)");
-        InstanceSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("Enable instance switching notification sound", false,
+        InstanceSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("Instance switching notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
-        InstanceRejoinNotificationsEnabled = _melonCategory.CreateEntry("Enable instance rejoin notifications", true,
+        InstanceRejoinNotificationsEnabled = _melonCategory.CreateEntry("Instance rejoin notifications", true,
             description: "Will automatically send ChatBox notifications when you rejoin the current instance");
         InstanceRejoinNotificationsTemplate = _melonCategory.CreateEntry("Instance rejoin template", "Rejoining",
             description: "Template for instance rejoin notifications ({0}=instanceId,{1}=worldId,{2}=isHome)");
-        InstanceRejoinNotificationsSoundEnabled = _melonCategory.CreateEntry("Enable instance rejoin notification sound", false,
+        InstanceRejoinNotificationsSoundEnabled = _melonCategory.CreateEntry("Instance rejoin notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
-        VRModeSwitchNotificationsEnabled = _melonCategory.CreateEntry("Enable VR Mode switch notifications", true,
+        VRModeSwitchNotificationsEnabled = _melonCategory.CreateEntry("VR Mode switch notifications", true,
             description: "Will automatically send ChatBox notifications when you switch between VR/Desktop mode");
         VRModeSwitchNotificationsTemplateVR = _melonCategory.CreateEntry("VR mode switch template", "Switched to VR",
             description: "Template for VR mode switch notifications");
         VRModeSwitchNotificationsTemplateDesktop = _melonCategory.CreateEntry("Desktop mode switch template", "Switched to Desktop",
             description: "Template for Desktop mode switch notifications");
-        VRModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("Enable VR Mode switch notification sound", false,
+        VRModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("VR Mode switch notification sound", false,
+            description: "Will play a sound to other users when the notification is sent");
+
+        FBTModeSwitchNotificationsEnabled = _melonCategory.CreateEntry("FBT Mode switch notifications", true,
+            description: "Will automatically send ChatBox notifications when you switch between FBT/Halfbody mode");
+        FBTModeSwitchNotificationsTemplateFBT = _melonCategory.CreateEntry("FBT mode switch template", "Switched to FBT",
+            description: "Template for FBT mode switch notifications");
+        FBTModeSwitchNotificationsTemplateHalfBody = _melonCategory.CreateEntry("Halfbody mode switch template", "Switched to Halfbody",
+            description: "Template for Halfbody mode switch notifications");
+        FBTModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("FBT Mode switch notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
     }
 }

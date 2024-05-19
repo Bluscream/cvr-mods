@@ -43,8 +43,6 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<List<ushort>> LogPropSpawnsColorARGB;
     internal static MelonPreferences_Entry<string> LogPropSpawnsTemplate;
 
-    internal static Color GetColor(List<ushort> _c) => Color.FromArgb(_c[0], _c[1], _c[2], _c[3]);  // cursed
-
     public static void InitializeMelonPrefs() {
         _melonCategory = MelonPreferences.CreateCategory(AssemblyInfoParams.Name);
         EnableMod = _melonCategory.CreateEntry("Enable Mod", true,
