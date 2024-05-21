@@ -1,19 +1,22 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using ABI_RC.Systems.VRModeSwitch;
 using MelonLoader;
 
 namespace Bluscream.MoreChatNotifications.Modules;
 
 internal class VirtualDesktopModule : ProcessMonitorModule {
-    protected new ModuleConfig Config;
+    internal ModuleConfig Config;
 
-    public VirtualDesktopModule() : base("VirtualDesktop.Server") { }
+    public VirtualDesktopModule() : base("VirtualDesktop.Server", "Virtual Desktop") { }
 
     internal override void Initialize() {
+        Mod.Logger.Msg($"VirtualDesktopModule.Initialize start");
         Config = new ModuleConfig();
         Config.Initialize(this);
         ProcessStarted += VirtualDesktopModule_ProcessStarted;
         ProcessExited += VirtualDesktopModule_ProcessExited;
+        Mod.Logger.Msg($"VirtualDesktopModule.Initialize end ({Config.Enabled.Value})");
     }
 
     private void VirtualDesktopModule_ProcessStarted(Process newProcess) {
@@ -35,8 +38,10 @@ internal class VirtualDesktopModule : ProcessMonitorModule {
         internal MelonPreferences_Entry<string> DisconnectedTemplate;
         internal MelonPreferences_Entry<bool> Sound;
         internal MelonPreferences_Entry<bool> Exclusive;
-        internal new void Initialize(ProcessMonitorModule moduleBase, bool enabled = true) {
+        internal override void Initialize(ProcessMonitorModule moduleBase, bool enabled = true) {
             base.Initialize(moduleBase, enabled);
+            Enabled.DisplayName = "VirtualDesktop notifications";
+            Interval.DisplayName = "VirtualDesktop check interval (s)";
             ConnectedTemplate = Category.CreateEntry("VirtualDesktop connected template", "VR Connected",
                 description: "Template for VirtualDesktop connected notifications");
             DisconnectedTemplate = Category.CreateEntry("VirtualDesktop disconnected template", "VR Disconnected",

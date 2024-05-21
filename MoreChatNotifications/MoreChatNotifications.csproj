@@ -9,7 +9,7 @@
   </Target>
   <Target Name="AfterBuild">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="G:/Steam/steamapps/common/ChilloutVR/Mods" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" />
-    <!--Exec Command="&quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" /-->
+    <Exec Command="&quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="rem &quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />

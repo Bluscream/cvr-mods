@@ -10,6 +10,9 @@ using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.IK;
 using ABI_RC.Core.UI;
 using Bluscream.MoreChatNotifications.Modules;
+using UnityEngine;
+using System.Collections;
+using static Mono.Security.X509.X520;
 
 namespace Bluscream.MoreChatNotifications;
 public class Mod : MelonMod {
@@ -44,13 +47,6 @@ public class Mod : MelonMod {
         Kafe.ChatBox.API.SendMessage(text.ToString(), sendSoundNotification: sendSoundNotification, displayInChatBox: true, displayInHistory: displayInHistory);
     }
 
-    internal static void OnFirstWorldLoaded() {
-        if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
-        FirstWorldLoaded = true;
-        Logger.Msg("OnFirstWorldLoaded");
-        if (VirtualDesktopModule.Config.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
-    }
-
     public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
         if (!ModConfig.EnableMod.Value) return;
         switch (buildIndex) {
@@ -61,6 +57,31 @@ public class Mod : MelonMod {
                 if (!FirstWorldLoaded) OnFirstWorldLoaded();
                 break;
         }
+    }
+
+    internal static void OnFirstWorldLoaded() {
+        if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
+        FirstWorldLoaded = true;
+        Logger.Msg("OnFirstWorldLoaded");
+        if (VirtualDesktopModule.Config.Enabled.Value) ToggleMonitor();
+    }
+
+    internal static void ToggleMonitor() {
+        if (VirtualDesktopModule.monitorRoutine != null) {
+            MelonLogger.Msg($"[{VirtualDesktopModule.Name}] Old monitorRoutine already running, stopping");
+            VirtualDesktopModule.monitorRoutine = null;
+        } else {
+            VirtualDesktopModule.monitorRoutine = MelonCoroutines.Start(MonitorVirtualDesktop());
+        }
+    }
+
+    internal static IEnumerator MonitorVirtualDesktop() {
+        MelonLogger.Msg($"Started {VirtualDesktopModule.Name} Monitor with interval of {VirtualDesktopModule.Config.Interval.Value}s");
+        while (VirtualDesktopModule.monitorRoutine != null) {
+            VirtualDesktopModule.CheckForProcess();
+            yield return new WaitForSeconds(VirtualDesktopModule.Config.Interval.Value);
+        }
+        MelonLogger.Msg($"Stopped {VirtualDesktopModule.ProcessName} Monitor");
     }
 
     [HarmonyPatch]

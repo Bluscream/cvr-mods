@@ -2,48 +2,53 @@
 using System.Diagnostics;
 using UnityEngine;
 using MelonLoader;
+using Bluscream.MoreChatNotifications;
 
 namespace Bluscream;
 
 internal abstract class ProcessMonitorModule : ModuleBase {
-    protected readonly string ProcessName;
+    internal readonly string ProcessName;
     protected Process Process;
-    protected object monitorRoutine = null;
-    protected new ProcessMonitorModuleConfig Config;
+    internal object monitorRoutine = null;
+    protected ProcessMonitorModuleConfig _Config;
 
     public delegate void ProcessStartedHandler(Process newProcess);
     public delegate void ProcessExitedHandler(Process oldProcess);
     public static event ProcessStartedHandler ProcessStarted;
     public static event ProcessExitedHandler ProcessExited;
 
-    protected ProcessMonitorModule(string processName) : base("Process Monitor") {
+    protected ProcessMonitorModule(string processName, string moduleName = "Process Monitor") : base(moduleName) {
         ProcessName = processName;
     }
 
     internal override void Initialize() {
-        Config = new ProcessMonitorModuleConfig();
-        Config.Initialize(this);
+        Mod.Logger.Msg($"ProcessMonitorModule.Initialize start");
+        _Config = new ProcessMonitorModuleConfig();
+        _Config.Initialize(this);
+        Mod.Logger.Msg($"ProcessMonitorModule.Initialize end");
     }
 
-    internal virtual void ToggleMonitor() {
+    /*internal virtual void ToggleMonitor() {
         if (monitorRoutine != null) {
             MelonLogger.Msg($"[{Name}] Old monitorRoutine already running, stopping");
             monitorRoutine = null;
         } else {
             monitorRoutine = MelonCoroutines.Start(MonitorProcess());
+            MelonLogger.Msg($"Started {ProcessName} Monitor");
         }
-    }
+    }*/
 
-    protected virtual IEnumerator MonitorProcess() {
-        MelonLogger.Msg($"Started {ProcessName} Monitor with interval of {Config.Interval.Value}s");
+    /*internal IEnumerator MonitorProcess() {
+        MelonLogger.Msg($"Started {ProcessName} Monitor with interval of {_Config.Interval.Value}s");
         while (monitorRoutine != null) {
             CheckForProcess();
-            yield return new WaitForSeconds(Config.Interval.Value);
+            yield return new WaitForSeconds(_Config.Interval.Value);
         }
         MelonLogger.Msg($"Stopped {ProcessName} Monitor");
-    }
+    }*/
 
-    protected virtual void CheckForProcess() {
+    internal void CheckForProcess() {
+        MelonLogger.Msg($"ProcessMonitorModule.CheckForProcess start");
         var runningProcesses = Process.GetProcessesByName(ProcessName);
         if (runningProcesses.Length > 1) {
             MelonLogger.Warning($"{ProcessName} found {runningProcesses.Length} times, imploding!");
