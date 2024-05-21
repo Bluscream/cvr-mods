@@ -9,6 +9,7 @@ using ABI_RC.Core.Savior;
 using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.IK;
 using ABI_RC.Core.UI;
+using Bluscream.MoreChatNotifications.Modules;
 
 namespace Bluscream.MoreChatNotifications;
 public class Mod : MelonMod {
@@ -17,11 +18,12 @@ public class Mod : MelonMod {
     public static DateTime LastWorldTime = DateTime.Now;
     public static float LastWorldPercent = 0f;
     private static bool FirstWorldLoaded = false;
+    private static VirtualDesktopModule VirtualDesktopModule = new();
 
     public override void OnInitializeMelon() {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
-        Modules.VirtualDesktopModule.Initialize();
+        VirtualDesktopModule.Initialize();
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
             Logger.BigError("Chatbox mod not found! Make sure it is properly installed");
@@ -46,7 +48,7 @@ public class Mod : MelonMod {
         if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
         FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
-        if (Modules.VirtualDesktopModule.ModuleConfig.VirtualDesktop.Value) Modules.VirtualDesktopModule.ToggleMonitor();
+        if (VirtualDesktopModule.Config.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
     }
 
     public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
