@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using Bluscream.MoreLogging.Properties;
-using Bluscream.MoreLogging;
 
 namespace Bluscream.MoreLogging.Integrations;
 internal class ChatBox {

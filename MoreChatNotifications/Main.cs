@@ -8,8 +8,6 @@ using ABI_RC.Core.Base;
 using ABI_RC.Core.Savior;
 using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.IK;
-using System.Diagnostics;
-using Unity.Services.Analytics;
 using ABI_RC.Core.UI;
 
 namespace Bluscream.MoreChatNotifications;
@@ -23,7 +21,7 @@ public class Mod : MelonMod {
     public override void OnInitializeMelon() {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
-        Modules.VirtualDesktop.Initialize();
+        Modules.VirtualDesktopModule.Initialize();
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
             Logger.BigError("Chatbox mod not found! Make sure it is properly installed");
@@ -45,9 +43,22 @@ public class Mod : MelonMod {
     }
 
     internal static void OnFirstWorldLoaded() {
-        if (!ModConfig.EnableMod.Value) return;
+        if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
+        FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
-        if (Modules.VirtualDesktop.ModuleConfig.VirtualDesktopDisconnected.Value) Modules.VirtualDesktop.CheckForVirtualDesktop();
+        if (Modules.VirtualDesktopModule.ModuleConfig.VirtualDesktop.Value) Modules.VirtualDesktopModule.ToggleMonitor();
+    }
+
+    public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
+        if (!ModConfig.EnableMod.Value) return;
+        switch (buildIndex) {
+            case 0: break;
+            case 1: break;
+            case 2: break;
+            default:
+                if (!FirstWorldLoaded) OnFirstWorldLoaded();
+                break;
+        }
     }
 
     [HarmonyPatch]
@@ -71,7 +82,6 @@ public class Mod : MelonMod {
         internal static void AfterLoadIntoWorld(string worldId, bool isHomeRequested = false) {
             if (!ModConfig.EnableMod.Value) return;
             if (!FirstWorldLoaded) {
-                FirstWorldLoaded = true;
                 OnFirstWorldLoaded();
             }
             if (!ModConfig.InstanceSwitchNotificationsEnabled.Value || !ModConfig.InstanceRejoinNotificationsEnabled.Value) return;
