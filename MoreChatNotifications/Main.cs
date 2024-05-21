@@ -18,13 +18,12 @@ public class Mod : MelonMod {
     public static DateTime LastWorldTime = DateTime.Now;
     public static float LastWorldPercent = 0f;
     private static bool FirstWorldLoaded = false;
-    private static VirtualDesktopModule VirtualDesktopModule = new();
 
     public override void OnInitializeMelon() {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
         VirtualDesktopModule.Initialize();
-        VirtualDesktopModule.ModuleConfig.Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { ToggleMonitor(); });
+        //VirtualDesktopModule.ModuleConfig.Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { VirtualDesktopModule.ToggleMonitor(); });
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
             Logger.BigError("Chatbox mod not found! Make sure it is properly installed");
@@ -61,16 +60,7 @@ public class Mod : MelonMod {
         if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
         FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
-        if (VirtualDesktopModule.ModuleConfig.Enabled.Value) ToggleMonitor();
-    }
-
-    public static void ToggleMonitor() {
-        if (VirtualDesktopModule.monitorRoutine != null) {
-            Mod.Logger.Msg($"old monitorRoutine already running, stopping");
-            VirtualDesktopModule.monitorRoutine = null;
-        } else {
-            VirtualDesktopModule.monitorRoutine = MelonCoroutines.Start(VirtualDesktopModule.MonitorProcess());
-        }
+        if (VirtualDesktopModule.ModuleConfig.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
     }
 
     [HarmonyPatch]

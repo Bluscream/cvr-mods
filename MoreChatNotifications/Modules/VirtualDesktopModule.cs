@@ -6,37 +6,39 @@ using Bluscream.MoreChatNotifications.Properties;
 using MelonLoader;
 
 namespace Bluscream.MoreChatNotifications.Modules {
-    public class VirtualDesktopModule {
-        private const string ProcessName = "VirtualDesktop.Server";
-        private Process Process;
-        public object monitorRoutine = null;
+    public static class VirtualDesktopModule {
+        internal const string ProcessName = "VirtualDesktop.Server";
+        internal static Process Process;
+        public static object monitorRoutine = null;
 
-        public void Initialize() {
+        public static void Initialize() {
             ModuleConfig.InitializeMelonPrefs();
         }
 
-        //public void ToggleMonitor() {
-        //    if (monitorRoutine != null) {
-        //        Mod.Logger.Msg($"old monitorRoutine already running, stopping");
-        //        monitorRoutine = null;
-        //    } else {
-        //        monitorRoutine = MelonCoroutines.Start(MonitorProcess());
-        //    }
-        //}
+        public static void ToggleMonitor() {
+            if (monitorRoutine != null) {
+                MelonLogger.Warning($"old monitorRoutine already running, stopping");
+                monitorRoutine = null;
+            } else {
+                monitorRoutine = MelonCoroutines.Start(MonitorProcess());
+            }
+        }
 
         public static IEnumerator MonitorProcess() {
-            Mod.Logger.Msg($"Started {ProcessName} Monitor with interval of {ModuleConfig.Interval.Value}s");
+            MelonLogger.Msg($"Started {ProcessName} Monitor with interval of {ModuleConfig.Interval.Value}s");
             while (ModuleConfig.Enabled.Value) {
                 CheckForProcess();
                 yield return new WaitForSeconds(ModuleConfig.Interval.Value);
             }
-            Mod.Logger.Msg($"Stopped {ProcessName} Monitor");
+            MelonLogger.Msg($"Stopped {ProcessName} Monitor");
         }
 
-        private static void CheckForProcess() {
+        internal static void CheckForProcess() {
+            //MelonLogger.Warning($"CheckForProcess");
             var runningProcesses = Process.GetProcessesByName(ProcessName);
+            //MelonLogger.Warning($"{ProcessName}={runningProcesses.Length}");
             if (runningProcesses.Length > 1) {
-                Mod.Logger.Warning($"{ProcessName} found {runningProcesses.Length} times, imploding!");
+                MelonLogger.Warning($"{ProcessName} found {runningProcesses.Length} times, imploding!");
                 return;
             } else if (runningProcesses.Length == 1) {
                 var runningProcess = runningProcesses[0];
@@ -44,9 +46,9 @@ namespace Bluscream.MoreChatNotifications.Modules {
                     Process = runningProcess;
                     _OnVirtualDesktopConnected(runningProcess);
                 } else if (runningProcess.Id == Process.Id) {
-                    return;
+                    //MelonLogger.Warning($"pid same");
                 } else {
-                    UnityEngine.Debug.Log($"{ProcessName} found {runningProcesses.Length} times, imploding!");
+                    MelonLogger.Warning($"pid change? ({Process.Id}=>{runningProcess.Id})");
                 }
             } else if (runningProcesses.Length == 0) {
                 if (Process != null) {
@@ -57,26 +59,24 @@ namespace Bluscream.MoreChatNotifications.Modules {
             }
         }
 
-        public delegate void VirtualDesktopEventHandler(object sender, EventArgs e);
-        public event VirtualDesktopEventHandler OnVirtualDesktopConnected;
-        public event VirtualDesktopEventHandler OnVirtualDesktopDisconnected;
+        public delegate void VirtualDesktopEventHandler(Process process);
+        public static event VirtualDesktopEventHandler OnVirtualDesktopConnected;
+        public static event VirtualDesktopEventHandler OnVirtualDesktopDisconnected;
 
-        private void _OnVirtualDesktopConnected(Process newProcess) {
+        private static void _OnVirtualDesktopConnected(Process newProcess) {
+            MelonLogger.Msg($"VirtualDesktopProcess has connected with pid {newProcess.Id}");
             if (!ModConfig.EnableMod.Value || !ModuleConfig.Enabled.Value || string.IsNullOrWhiteSpace(ModuleConfig.ConnectedTemplate.Value)) return;
-            Mod.Logger.Msg($"VirtualDesktopProcess has connected with pid {newProcess.Id}");
-            OnVirtualDesktopConnected?.Invoke(this, EventArgs.Empty);
+            OnVirtualDesktopConnected?.Invoke(newProcess);
             if (!ModuleConfig.Exclusive.Value || !VRModeSwitchManager.Instance.IsInXR())
                 Mod.SendChatNotification(ModuleConfig.ConnectedTemplate.Value);
-
         }
 
-        private void _OnVirtualDesktopDisconnected(Process oldProcess) {
+        private static void _OnVirtualDesktopDisconnected(Process oldProcess) {
+            MelonLogger.Msg($"VirtualDesktopProcess has disconnected with pid {oldProcess.Id}");
             if (!ModConfig.EnableMod.Value || !ModuleConfig.Enabled.Value || string.IsNullOrWhiteSpace(ModuleConfig.DisconnectedTemplate.Value)) return;
-            Mod.Logger.Msg($"VirtualDesktopProcess has disconnected with pid {oldProcess.Id}");
-            OnVirtualDesktopDisconnected?.Invoke(this, EventArgs.Empty);
+            OnVirtualDesktopDisconnected?.Invoke(oldProcess);
             if (!ModuleConfig.Exclusive.Value || VRModeSwitchManager.Instance.IsInXR())
                 Mod.SendChatNotification(ModuleConfig.DisconnectedTemplate.Value);
-
         }
 
         public static class ModuleConfig {
@@ -91,6 +91,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
                 Category = MelonPreferences.GetCategory(AssemblyInfoParams.Name);
                 Enabled = Category.CreateEntry("VirtualDesktop notifications", true,
                     description: "Will automatically send ChatBox notifications when your VR Headset disconnects from VirtualDesktop while you're in VR mode (VirtualDesktop.Server.exe quits)");
+                Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { ToggleMonitor(); });
                 Interval = Category.CreateEntry("VirtualDesktop check interval (s)", 1f,
                     description: $"How many seconds between checks whether {ProcessName}.exe is (still) running");
                 ConnectedTemplate = Category.CreateEntry("VirtualDesktop connected template", "VR Connected",

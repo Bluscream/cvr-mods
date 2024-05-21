@@ -7,7 +7,7 @@ using Bluscream.MoreChatNotifications;
 namespace Bluscream;
 
 internal abstract class ProcessMonitorModule : ModuleBase {
-    internal readonly string ProcessName;
+    protected readonly string ProcessName;
     protected Process Process;
     internal object monitorRoutine = null;
     protected ProcessMonitorModuleConfig _Config;
@@ -28,7 +28,7 @@ internal abstract class ProcessMonitorModule : ModuleBase {
         Mod.Logger.Msg($"ProcessMonitorModule.Initialize end");
     }
 
-    /*internal virtual void ToggleMonitor() {
+    internal virtual void ToggleMonitor() {
         if (monitorRoutine != null) {
             MelonLogger.Msg($"[{Name}] Old monitorRoutine already running, stopping");
             monitorRoutine = null;
@@ -36,19 +36,19 @@ internal abstract class ProcessMonitorModule : ModuleBase {
             monitorRoutine = MelonCoroutines.Start(MonitorProcess());
             MelonLogger.Msg($"Started {ProcessName} Monitor");
         }
-    }*/
+    }
 
-    /*internal IEnumerator MonitorProcess() {
+    internal IEnumerator MonitorProcess() {
         MelonLogger.Msg($"Started {ProcessName} Monitor with interval of {_Config.Interval.Value}s");
         while (monitorRoutine != null) {
             CheckForProcess();
             yield return new WaitForSeconds(_Config.Interval.Value);
         }
         MelonLogger.Msg($"Stopped {ProcessName} Monitor");
-    }*/
+    }
 
-    internal void CheckForProcess() {
-        MelonLogger.Msg($"ProcessMonitorModule.CheckForProcess start");
+    protected virtual void CheckForProcess() {
+        Mod.Logger.Msg($"ProcessMonitorModule.CheckForProcess start");
         var runningProcesses = Process.GetProcessesByName(ProcessName);
         if (runningProcesses.Length > 1) {
             MelonLogger.Warning($"{ProcessName} found {runningProcesses.Length} times, imploding!");
