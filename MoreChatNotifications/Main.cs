@@ -23,6 +23,7 @@ public class Mod : MelonMod {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
         VirtualDesktopModule.Initialize();
+        TrackerBatteryModule.Initialize();
         //VirtualDesktopModule.ModuleConfig.Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { VirtualDesktopModule.ToggleMonitor(); });
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
@@ -31,6 +32,8 @@ public class Mod : MelonMod {
         }
 
         VRModeSwitchEvents.OnPostVRModeSwitch.AddListener(vr => {
+            Logger.Msg($"HMD Name: {TrackerBatteryModule.GetHmdName()}");
+            Logger.Msg($"HMD Battery: {TrackerBatteryModule.GetDeviceBattery()}");
             if (!ModConfig.EnableMod.Value || !ModConfig.VRModeSwitchNotificationsEnabled.Value) return;
             SendChatNotification(
                 text: string.Format(vr ? ModConfig.VRModeSwitchNotificationsTemplateVR.Value : ModConfig.VRModeSwitchNotificationsTemplateDesktop.Value),
@@ -61,6 +64,8 @@ public class Mod : MelonMod {
         FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
         if (VirtualDesktopModule.ModuleConfig.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
+        Logger.Msg($"HMD Name: {TrackerBatteryModule.GetHmdName()}");
+        Logger.Msg($"HMD Battery: {TrackerBatteryModule.GetDeviceBattery()}");
     }
 
     [HarmonyPatch]
