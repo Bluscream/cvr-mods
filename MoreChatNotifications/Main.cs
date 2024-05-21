@@ -23,7 +23,10 @@ public class Mod : MelonMod {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
         VirtualDesktopModule.Initialize();
+        if (VirtualDesktopModule.ModuleConfig.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
         TrackerBatteryModule.Initialize();
+        HTTPServerModule.Initialize();
+        if (HTTPServerModule.ModuleConfig.Enabled.Value) HTTPServerModule.ToggleMonitor();
         //VirtualDesktopModule.ModuleConfig.Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { VirtualDesktopModule.ToggleMonitor(); });
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
@@ -32,19 +35,12 @@ public class Mod : MelonMod {
         }
 
         VRModeSwitchEvents.OnPostVRModeSwitch.AddListener(vr => {
-            Logger.Msg($"HMD Name: {TrackerBatteryModule.GetHmdName()}");
-            Logger.Msg($"HMD Battery: {TrackerBatteryModule.GetDeviceBattery()}");
             if (!ModConfig.EnableMod.Value || !ModConfig.VRModeSwitchNotificationsEnabled.Value) return;
-            SendChatNotification(
+            Utils.SendChatNotification(
                 text: string.Format(vr ? ModConfig.VRModeSwitchNotificationsTemplateVR.Value : ModConfig.VRModeSwitchNotificationsTemplateDesktop.Value),
                 sendSoundNotification: ModConfig.VRModeSwitchNotificationsSoundEnabled.Value
             );
         });
-    }
-
-    internal static void SendChatNotification(object text, bool sendSoundNotification = false, bool displayInHistory = false) {
-        if (!ModConfig.EnableMod.Value) return;
-        Kafe.ChatBox.API.SendMessage(text.ToString(), sendSoundNotification: sendSoundNotification, displayInChatBox: true, displayInHistory: displayInHistory);
     }
 
     public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
@@ -63,9 +59,8 @@ public class Mod : MelonMod {
         if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
         FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
-        if (VirtualDesktopModule.ModuleConfig.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
-        Logger.Msg($"HMD Name: {TrackerBatteryModule.GetHmdName()}");
-        Logger.Msg($"HMD Battery: {TrackerBatteryModule.GetDeviceBattery()}");
+        //Logger.Msg($"HMD Name: {TrackerBatteryModule.GetHmdName()}");
+        //Logger.Msg($"HMD Battery: {TrackerBatteryModule.GetDeviceBattery()}");
     }
 
     [HarmonyPatch]
@@ -77,7 +72,7 @@ public class Mod : MelonMod {
             //if (DelayCoroutine != null) MelonCoroutines.Stop(DelayCoroutine);
             var now = DateTime.Now;
             if ((now - LastWorldTime).TotalMilliseconds > ModConfig.WorldDownloadNotificationsIntervalMS.Value) { // value == 0 || 
-                SendChatNotification(
+                Utils.SendChatNotification(
                     text: string.Format(ModConfig.WorldDownloadNotificationsTemplate.Value, value.ToString())
                 );
                 //DelayCoroutine = MelonCoroutines.Start(CommonMethods.Delay1S());
@@ -94,14 +89,14 @@ public class Mod : MelonMod {
             if (!ModConfig.InstanceSwitchNotificationsEnabled.Value || !ModConfig.InstanceRejoinNotificationsEnabled.Value) return;
             var isRejoin = Instances.RequestedInstance == MetaPort.Instance.CurrentInstanceId;
             if (isRejoin && ModConfig.InstanceRejoinNotificationsEnabled.Value) {
-                SendChatNotification(
+                Utils.SendChatNotification(
                     text: string.Format(ModConfig.InstanceRejoinNotificationsTemplate.Value,
                         Instances.RequestedInstance, worldId, isHomeRequested ? "Home" : string.Empty
                     ),
                     sendSoundNotification: ModConfig.InstanceSwitchNotificationsSoundEnabled.Value
                 );
             } else if (!isRejoin && !ModConfig.InstanceSwitchNotificationsEnabled.Value) {
-                SendChatNotification(
+                Utils.SendChatNotification(
                     text: string.Format(ModConfig.InstanceSwitchNotificationsTemplate.Value,
                         Instances.RequestedInstance, worldId, isHomeRequested ? "Home" : string.Empty
                     ),
@@ -113,7 +108,7 @@ public class Mod : MelonMod {
         [HarmonyPatch(typeof(BodySystem), nameof(BodySystem.ToggleFullBody))]
         internal static void AfterToggleFullBody() {
             if (!ModConfig.EnableMod.Value || !ModConfig.FBTModeSwitchNotificationsEnabled.Value) return;
-            SendChatNotification(
+            Utils.SendChatNotification(
                 text: IKSystem.Instance.BodySystem.FullBodyEnabled ? ModConfig.FBTModeSwitchNotificationsTemplateFBT.Value : ModConfig.FBTModeSwitchNotificationsTemplateHalfBody.Value,
                 sendSoundNotification: ModConfig.FBTModeSwitchNotificationsSoundEnabled.Value
             );
@@ -122,7 +117,7 @@ public class Mod : MelonMod {
         [HarmonyPatch(typeof(CohtmlHud), nameof(CohtmlHud.SetCommsIndicator))]
         internal static void AfterSetCommsIndicator(bool shown) {
             if (!ModConfig.EnableMod.Value || !ModConfig.VoiceConnectionLostNotificationEnabled.Value) return;
-            SendChatNotification(
+            Utils.SendChatNotification(
                 text: string.Format(shown ? ModConfig.VoiceConnectionLostNotificationTemplateGained.Value : ModConfig.VoiceConnectionLostNotificationTemplateLost.Value),
                 sendSoundNotification: ModConfig.VoiceConnectionLostNotificationSoundEnabled.Value
             );
@@ -131,7 +126,7 @@ public class Mod : MelonMod {
         [HarmonyPatch(typeof(AudioManagement), nameof(AudioManagement.SetMicrophoneActive))]
         internal static void AfterSetMicrophoneActive(bool active) {
             if (!ModConfig.EnableMod.Value || !ModConfig.MicrophoneNotificationEnabled.Value) return;
-            SendChatNotification(
+            Utils.SendChatNotification(
                 text: string.Format(active ? ModConfig.MicrophoneNotificationTemplateUnmuted.Value : ModConfig.MicrophoneNotificationTemplateMuted.Value),
                 sendSoundNotification: ModConfig.MicrophoneNotificationSoundEnabled.Value
             );

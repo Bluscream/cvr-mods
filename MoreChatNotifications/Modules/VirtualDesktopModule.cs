@@ -68,7 +68,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
             if (!ModConfig.EnableMod.Value || !ModuleConfig.Enabled.Value || string.IsNullOrWhiteSpace(ModuleConfig.ConnectedTemplate.Value)) return;
             OnVirtualDesktopConnected?.Invoke(newProcess);
             if (!ModuleConfig.Exclusive.Value || !VRModeSwitchManager.Instance.IsInXR())
-                Mod.SendChatNotification(ModuleConfig.ConnectedTemplate.Value);
+                Utils.SendChatNotification(ModuleConfig.ConnectedTemplate.Value);
         }
 
         private static void _OnVirtualDesktopDisconnected(Process oldProcess) {
@@ -76,7 +76,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
             if (!ModConfig.EnableMod.Value || !ModuleConfig.Enabled.Value || string.IsNullOrWhiteSpace(ModuleConfig.DisconnectedTemplate.Value)) return;
             OnVirtualDesktopDisconnected?.Invoke(oldProcess);
             if (!ModuleConfig.Exclusive.Value || VRModeSwitchManager.Instance.IsInXR())
-                Mod.SendChatNotification(ModuleConfig.DisconnectedTemplate.Value);
+                Utils.SendChatNotification(ModuleConfig.DisconnectedTemplate.Value);
         }
 
         public static class ModuleConfig {

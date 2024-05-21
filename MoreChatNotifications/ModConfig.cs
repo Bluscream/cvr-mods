@@ -5,6 +5,8 @@ namespace Bluscream.MoreChatNotifications;
 public static class ModConfig {
     private static MelonPreferences_Category _melonCategory;
     internal static MelonPreferences_Entry<bool> EnableMod;
+    internal static MelonPreferences_Entry<bool> EnableLogging;
+    internal static MelonPreferences_Entry<bool> EnableHUDNotifications;
 
     internal static MelonPreferences_Entry<bool> WorldDownloadNotificationsEnabled;
     internal static MelonPreferences_Entry<string> WorldDownloadNotificationsTemplate;
@@ -45,6 +47,10 @@ public static class ModConfig {
         _melonCategory = MelonPreferences.CreateCategory(AssemblyInfoParams.Name);
         EnableMod = _melonCategory.CreateEntry("Enable Mod", true,
             description: "The mod will do nothing while disabled");
+        EnableLogging = _melonCategory.CreateEntry("Enable Logging", true,
+            description: "The mod will write nothing to the MelonLoader Console/Logfile while this is disabled");
+        EnableHUDNotifications = _melonCategory.CreateEntry("Enable HUD Notifications", true,
+            description: "The mod will show no HUD notifications while this is disabled");
 
         WorldDownloadNotificationsEnabled = _melonCategory.CreateEntry("World download notifications", false,
             description: "Will automatically send ChatBox notifications while you download a world");

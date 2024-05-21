@@ -11,7 +11,6 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using System.Security.Cryptography;
-using Bluscream.PropSpawner;
 
 namespace Bluscream;
 
@@ -172,7 +171,7 @@ public static partial class Extensions {
     #endregion
 
     #region Object
-    public static string ToJSON(this object obj, bool indented = true) {
+    public static string ToJson(this object obj, bool indented = true) {
         // return JsonConvert.SerializeObject(obj, (indented ? Formatting.Indented : Formatting.None), new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, DateFormatString = "yyyy-MM-dd hh:mm:ss"}) ; // , new JsonConverter[] { new StringEnumConverter() }
         return JsonConvert.SerializeObject(obj, (indented ? Formatting.Indented : Formatting.None), [new StringEnumConverter(), new IPAddressConverter(), new IPEndPointConverter()]);
     }
@@ -298,6 +297,10 @@ public static partial class Extensions {
 
         return sb.ToString();
     }
+    public static string GetValue(this IDictionary<string, object> dict, string key, string _default = null) {
+        dict.TryGetValue(key, out object ret);
+        return ret as string ?? _default;
+    }
     public static bool GetBool(this NameValueCollection collection, string key, bool defaultValue = false) {
         if (!collection.AllKeys.Contains(key, StringComparer.OrdinalIgnoreCase)) return false;
         var trueValues = new string[] { true.ToString(), "yes", "1" };
@@ -309,6 +312,15 @@ public static partial class Extensions {
     public static string GetString(this NameValueCollection collection, string key) {
         if (!collection.AllKeys.Contains(key)) return collection[key];
         return null;
+    }
+    /// <summary>
+    /// Converts a string to a boolean value.
+    /// </summary>
+    /// <param name="input">The string to convert.</param>
+    /// <returns><see langword="true"/> if the string represents a positive affirmation, <see langword="false"/> otherwise.</returns>
+    public static bool ToBoolean(this string input) {
+        var stringTrueValues = new[] { "true", "ok", "yes", "1", "y", "enabled", "on" };
+        return stringTrueValues.Contains(input.ToLower());
     }
     public static T PopFirst<T>(this IEnumerable<T> list) => list.ToList().PopAt(0);
     public static T PopLast<T>(this IEnumerable<T> list) => list.ToList().PopAt(list.Count() - 1);
