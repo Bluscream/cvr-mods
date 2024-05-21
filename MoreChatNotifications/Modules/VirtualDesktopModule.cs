@@ -9,31 +9,31 @@ namespace Bluscream.MoreChatNotifications.Modules {
     public class VirtualDesktopModule {
         private const string ProcessName = "VirtualDesktop.Server";
         private Process Process;
-        private object monitorRoutine = null;
+        public object monitorRoutine = null;
 
         public void Initialize() {
             ModuleConfig.InitializeMelonPrefs();
         }
 
-        public void ToggleMonitor() {
-            if (monitorRoutine != null) {
-                Mod.Logger.Msg($"old monitorRoutine already running, stopping");
-                monitorRoutine = null;
-            } else {
-                monitorRoutine = MelonCoroutines.Start(MonitorProcess());
-            }
-        }
+        //public void ToggleMonitor() {
+        //    if (monitorRoutine != null) {
+        //        Mod.Logger.Msg($"old monitorRoutine already running, stopping");
+        //        monitorRoutine = null;
+        //    } else {
+        //        monitorRoutine = MelonCoroutines.Start(MonitorProcess());
+        //    }
+        //}
 
-        private IEnumerator MonitorProcess() {
+        public static IEnumerator MonitorProcess() {
             Mod.Logger.Msg($"Started {ProcessName} Monitor with interval of {ModuleConfig.Interval.Value}s");
-            while (monitorRoutine != null) {
+            while (ModuleConfig.Enabled.Value) {
                 CheckForProcess();
                 yield return new WaitForSeconds(ModuleConfig.Interval.Value);
             }
             Mod.Logger.Msg($"Stopped {ProcessName} Monitor");
         }
 
-        private void CheckForProcess() {
+        private static void CheckForProcess() {
             var runningProcesses = Process.GetProcessesByName(ProcessName);
             if (runningProcesses.Length > 1) {
                 Mod.Logger.Warning($"{ProcessName} found {runningProcesses.Length} times, imploding!");

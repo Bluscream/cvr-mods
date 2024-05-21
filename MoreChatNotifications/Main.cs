@@ -24,6 +24,7 @@ public class Mod : MelonMod {
         Logger = new MelonLogger.Instance(AssemblyInfoParams.Name, color: System.Drawing.Color.DarkCyan);
         ModConfig.InitializeMelonPrefs();
         VirtualDesktopModule.Initialize();
+        VirtualDesktopModule.ModuleConfig.Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { ToggleMonitor(); });
 
         if (RegisteredMelons.FirstOrDefault(m => m.Info.Name == "ChatBox") is null) {
             Logger.BigError("Chatbox mod not found! Make sure it is properly installed");
@@ -60,7 +61,16 @@ public class Mod : MelonMod {
         if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
         FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
-        if (VirtualDesktopModule.ModuleConfig.Enabled.Value) VirtualDesktopModule.ToggleMonitor();
+        if (VirtualDesktopModule.ModuleConfig.Enabled.Value) ToggleMonitor();
+    }
+
+    public static void ToggleMonitor() {
+        if (VirtualDesktopModule.monitorRoutine != null) {
+            Mod.Logger.Msg($"old monitorRoutine already running, stopping");
+            VirtualDesktopModule.monitorRoutine = null;
+        } else {
+            VirtualDesktopModule.monitorRoutine = MelonCoroutines.Start(VirtualDesktopModule.MonitorProcess());
+        }
     }
 
     [HarmonyPatch]
