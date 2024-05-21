@@ -1,8 +1,4 @@
-﻿using ABI_RC.Core.Networking.API.Responses;
-using ABI_RC.Core.Networking.API;
-using ABI_RC.Core.Networking.IO.Instancing;
-using ABI_RC.Core.Savior;
-using Bluscream.MoreChatNotifications.Properties;
+﻿using Bluscream.MoreChatNotifications.Properties;
 using MelonLoader;
 using Newtonsoft.Json;
 using System.Collections;
@@ -40,11 +36,11 @@ namespace Bluscream.MoreChatNotifications.Modules {
                 var context = Server.GetContextAsync();
                 yield return new WaitUntil(() => context.IsCompleted);
                 HttpListenerRequest request = context.Result.Request;
-                var ret = new Dictionary<string, object>();
                 var splitPath = request.Url.AbsolutePath.Trim().Split('/').Select(t => t.ToLowerInvariant()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 //Console.WriteLine(splitPath.ToJson());
                 var client = $"{request.RemoteEndPoint.Address}:{request.RemoteEndPoint.Port}";
                 var fullUrl = Server.Prefixes.FirstOrDefault() + request.RawUrl.Substring(1);
+                var ret = new Dictionary<string, object>();
                 ret["request"] = new Dictionary<string, string>() { { "url", fullUrl }, { "ip", client } };
                 ret["response"] = new Dictionary<string, string>() { { "status", "success" } };
                 Utils.Log($"[{DateTime.Now}] {request.HttpMethod} request from {client} to {fullUrl}");
@@ -72,7 +68,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
                         }
                         break;
                 }
-                Respond(context.Result.Response, ret);
+                if (ModuleConfig.Respond.Value) Respond(context.Result.Response, ret);
             }
             Server.Stop();
             Utils.Warn($"Stopped HTTP Server loop");
@@ -109,6 +105,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
             private static MelonPreferences_Category Category;
             internal static MelonPreferences_Entry<bool> Enabled;
             internal static MelonPreferences_Entry<string[]> Prefixes;
+            internal static MelonPreferences_Entry<bool> Respond;
             public static void InitializeMelonPrefs() {
                 Category = MelonPreferences.GetCategory(AssemblyInfoParams.Name);
                 Enabled = Category.CreateEntry("HTTP Server", false,
@@ -116,6 +113,8 @@ namespace Bluscream.MoreChatNotifications.Modules {
                 Enabled.OnEntryValueChanged.Subscribe((_, _) => { ToggleMonitor(); });
                 Prefixes = Category.CreateEntry("HTTP Server Prefixes", new[] { "http://*:5111/" },
                     description: "Will automatically send ChatBox notifications when your VR Headset disconnects from VirtualDesktop while you're in VR mode (VirtualDesktop.Server.exe quits)");
+                Respond = Category.CreateEntry("HTTP Server Respond", false,
+                    description: "Enables HTTP Responses");
             }
         }
     }
