@@ -1,0 +1,22 @@
+{
+	"$schema": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
+	"_id": -1,
+	"author": "Bluscream",
+	"changelog": "- Initial release.",
+	"description": "`Plugin` that provides a API for other plugins and mods to listen to HTTP Requests (similar to OSC)\n\n",
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/latest/download/HTTPServer.dll",
+	"embedcolor": "006CFF",
+	"gameversion": "2024r175",
+	"loaderversion": "v0.6.1",
+	"modtype": "Mod",
+	"modversion": "1.0.0",
+	"name": "HTTPServer",
+	"requirements": [],
+	"searchtags": [
+		"http",
+		"https",
+		"web",
+		"server"
+	],
+	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/HTTPServer"
+}

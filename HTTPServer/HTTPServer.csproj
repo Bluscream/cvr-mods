@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Put your Chillout vr path in a new environnment variable CVRPATH in Windows -->
+    <OutputPath>G:/Steam/steamapps/common/ChilloutVR/Mods/</OutputPath>
+  </PropertyGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="taskkill /f /im ChilloutVR.exe" IgnoreExitCode="true" />
+  </Target>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="G:/Steam/steamapps/common/ChilloutVR/Mods" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" />
+    <Exec Command="&quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />
+  </Target>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="rem &quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />
+  </Target>
+  <ItemGroup>
+    <Compile Remove="Utils\Process.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aardwolf" Version="1.0.0" />
+    <PackageReference Include="Costura.Fody" Version="5.8.0-alpha0098">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
