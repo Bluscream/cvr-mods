@@ -7,6 +7,7 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<bool> EnableMod;
     internal static MelonPreferences_Entry<bool> EnableLogging;
     internal static MelonPreferences_Entry<bool> EnableHUDNotifications;
+    internal static MelonPreferences_Entry<bool> EnableChatNotifications;
 
     internal static MelonPreferences_Entry<bool> WorldDownloadNotificationsEnabled;
     internal static MelonPreferences_Entry<string> WorldDownloadNotificationsTemplate;
@@ -51,6 +52,8 @@ public static class ModConfig {
             description: "The mod will write nothing to the MelonLoader Console/Logfile while this is disabled");
         EnableHUDNotifications = _melonCategory.CreateEntry("Enable HUD Notifications", true,
             description: "The mod will show no HUD notifications while this is disabled");
+        EnableChatNotifications = _melonCategory.CreateEntry("Enable ChatBox Notifications", true,
+            description: "The mod will send no Chat notifications while this is disabled");
 
         WorldDownloadNotificationsEnabled = _melonCategory.CreateEntry("World download notifications", false,
             description: "Will automatically send ChatBox notifications while you download a world");

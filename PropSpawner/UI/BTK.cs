@@ -43,7 +43,9 @@ internal class BTK {
         RuleDetailsPage.MenuTitle = rule.Name ?? "Unknown";
         RuleDetailsPage.MenuSubtitle = rule.ToString();
         RuleDetailsPage.ClearChildren();
+        var enabled = rule.Enabled.GetValueOrDefault(true);
         var catText = ""; // Thanks to https://github.com/Nirv-git/CVRMods-Nirv/blob/main/WorldPropListMod/BTKUI_Cust.cs#L367
+        if (rule.Enabled != null) catText += $"Enabled: {enabled.ToYesNo()}<p>";
         if (rule.Name != null) catText += $"Name: {rule.Name}<p>";
         if (rule.File != null) catText += $"File: {rule.File.Name}<p>";
         if (rule.WorldId != null) catText += $"World: {rule.WorldId}<p>";
@@ -54,7 +56,23 @@ internal class BTK {
 
         var detailsCat = RuleDetailsPage.AddCategory("temp", true, false);
         detailsCat.CategoryName = catText;
-        var props = RuleDetailsPage.AddCategory($"{rule.Props.Count} Props");
+
+        var actionsCat = RuleDetailsPage.AddCategory("Actions", true, false);
+        actionsCat.AddToggle(enabled ? "Disable" : "Enable", "Toggle the rule", enabled).OnValueUpdated += (value) => {
+            rule.Enabled = value;
+            Utils.Log($"{rule.Enabled.Value.ToEnabledDisabled()} rule {rule.GetName()}");
+            PropConfigManager.SaveFile(rule.File);
+        };
+        actionsCat.AddButton("Delete", null, "Delete the rule").OnPress += () => {
+            BTKUILib.QuickMenuAPI.ShowConfirm("Are you sure?", $"Really delete rule {rule.GetName()} in file {rule.File.Name.Quote()}", () => {
+                Utils.Log(rule.ToJSON(false));
+                PropConfigManager.Rules.Remove(rule);
+                var rules = PropConfigManager.GetRulesByFile(rule.File);
+                rules.ToFile(rule.File);
+            });
+        };
+
+        var props = RuleDetailsPage.AddCategory($"{rule.Props.Count} Props", true, false);
         foreach (var prop in rule.Props) {
             var posStr = $"Position: {prop.Position?.ToVector3().ToString()}";
             if (prop.Rotation != null) posStr += $"<p>Rotation: {prop.Rotation?.ToQuaternion().ToString()}";

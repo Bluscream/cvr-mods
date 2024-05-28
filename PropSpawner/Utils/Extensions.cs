@@ -349,6 +349,7 @@ public static partial class Extensions {
     public static string ToYesNo(this bool input) => input ? "Yes" : "No";
     public static string ToEnabledDisabled(this bool input) => input ? "Enabled" : "Disabled";
     public static string ToOnOff(this bool input) => input ? "On" : "Off";
+    //public static bool GetOrDefault(this bool? input, bool defaultValue) => input.HasValue ? input.Value : defaultValue;
     #endregion
     internal class IPAddressConverter : JsonConverter {
         public override bool CanConvert(Type objectType) {

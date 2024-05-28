@@ -12,6 +12,12 @@ public partial class PropRule {
     /// </summary>
     public virtual FileInfo File { get; set; }
 
+    [JsonProperty("enabled", NullValueHandling = NullValueHandling.Ignore)]
+    /// <summary>
+    /// Optional field that contains a descriptive name for the rule
+    /// </summary>
+    public virtual bool? Enabled { get; set; }
+
     [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that contains a descriptive name for the rule
@@ -42,8 +48,6 @@ public partial class PropRule {
     /// </summary>
     public virtual string? InstancePrivacy { get; set; }
 
-
-
     [JsonProperty("propSelectionRandom", NullValueHandling = NullValueHandling.Ignore)]
     /// <summary>
     /// Optional field that when set will force a random prop from the list to be selected everytime
@@ -59,18 +63,19 @@ public partial class PropRule {
     [JsonIgnore]
     public virtual string Hash { get { return this.ToJSON().ToMd5(); } }
 
+
     public override string ToString() {
-        var ruleMatch = Name ?? WorldName ?? SceneName ?? WorldId ?? InstancePrivacy;
-        var msg = $"PropRule \"{File.Name}\" > \"{ruleMatch}\" (";
+        var msg = $"PropRule \"{File.Name}\" > \"{GetName()}\" (";
         if (PropSelectionRandom.HasValue && PropSelectionRandom.Value > 0) msg += $"{PropSelectionRandom.Value}/";
         return msg += $"{Props.Count} props)";
     }
+    public string GetName() => Name ?? WorldName ?? SceneName ?? WorldId ?? InstancePrivacy;
 
     public string MatchStr() => WorldName ?? SceneName ?? WorldId ?? InstancePrivacy ?? (MatchesEverywhere() ? "Everwhere" : "Unknown");
     public bool MatchesEverywhere() {
         var worldMissing = WorldId is null && SceneName is null && WorldName is null && InstancePrivacy is null;
         var worldWildcard = WorldId == "*" || SceneName == "*" || WorldName == "*" || InstancePrivacy == "*";
-        return worldMissing || worldWildcard;
+        return (worldMissing || worldWildcard); // Enabled.GetValueOrDefault(true) && 
     }
     public bool Matches(string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null) {
         // Utils.Warning($"debug PropRule.Matches start {worldId} {worldName} {sceneName} {instancePrivacy}");
@@ -84,6 +89,7 @@ public partial class PropRule {
         var sceneNameValid = SceneName != null && SceneName == sceneName;
         var instancePrivacyValid = InstancePrivacy != null && SceneName == instancePrivacy;
         // Utils.Warning($"debug PropRule.Matches end worldMissing={worldMissing} worldIdValid={worldIdValid} worldNameValid={worldNameValid} sceneNameValid={sceneNameValid} instancePrivacyValid={instancePrivacyValid}");
+        if (!Enabled.GetValueOrDefault(true)) return false;
         if (MatchesEverywhere() || worldIdValid || worldNameValid || sceneNameValid || instancePrivacyValid) return true;
         return false;
     }

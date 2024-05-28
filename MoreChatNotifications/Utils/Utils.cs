@@ -30,7 +30,7 @@ public static partial class Utils {
         MelonLogger.Warning(message.ToString(), parms);
     }
     public static void HUDNotify(string header = null, string subtext = null, string cat = null, float? time = null) {
-        if (!ModConfig.EnableHUDNotifications.Value) return;
+        if (!ModConfig.EnableMod.Value || !ModConfig.EnableHUDNotifications.Value) return;
         cat ??= $"(Local) {MoreChatNotifications.Properties.AssemblyInfoParams.Name}";
         if (time != null) {
             ViewManager.Instance.NotifyUser(cat, subtext, time.Value);
@@ -39,7 +39,7 @@ public static partial class Utils {
         }
     }
     public static void SendChatNotification(object text, bool sendSoundNotification = false, bool displayInHistory = false) {
-        if (!ModConfig.EnableMod.Value) return;
+        if (!ModConfig.EnableMod.Value || !ModConfig.EnableChatNotifications.Value) return;
         Kafe.ChatBox.API.SendMessage(text.ToString(), sendSoundNotification: sendSoundNotification, displayInChatBox: true, displayInHistory: displayInHistory);
     }
 }

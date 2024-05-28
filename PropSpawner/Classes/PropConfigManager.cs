@@ -1,6 +1,8 @@
 ﻿using MelonLoader;
 using System.Data;
 using System.Numerics;
+using Unity.VectorGraphics;
+using static Unity.Collections.Unicode;
 
 namespace Bluscream.PropSpawner {
     internal class PropConfigManager {
@@ -26,20 +28,25 @@ namespace Bluscream.PropSpawner {
                 Utils.Log($"Found {cfgFiles.Count} json files in {ConfigsDirectory.str()}");
                 Rules.Clear();
                 foreach (var (file, rules) in cfgFiles) {
-                    if (!file.Exists) continue;
                     Utils.Log($"Processing file: {file.str()}");
-                    foreach (var rule in rules) {
-                        try {
-                            rule.File = file;
-                            Rules.Add(rule);
-                        } catch (Exception ex) {
-                            Utils.Error($"Failed to load rule {rule}: {ex.Message}");
-                        }
-                    }
-                    Utils.Log($"Loaded {rules.Count} rules from {file.str()}");
+                    var fileRules = GetRulesFromFile(file);
+                    Rules.AddRange(fileRules);
+                    Utils.Log($"Loaded {fileRules.Count} rules from {file.str()}");
                 }
                 Utils.Log($"Loaded {Rules.Count} rules from {cfgFiles.Count} config files.");
             }
+        }
+        internal static List<PropRule> GetRulesFromFile(FileInfo file) {
+            var ret = new List<PropRule>();
+            if (!file.Exists) return ret;
+            try {
+                ret = PropConfig.FromFile(file);
+                Utils.Log($"Got {ret.Count} rules from {file.str()}");
+            } catch (Exception ex) {
+                Utils.Error($"Failed to load {file.str()}: {ex.Message}");
+                file.CopyTo(file + ".broken", true);
+            }
+            return ret;
         }
         internal static Dictionary<FileInfo, List<PropRule>> GetValidConfigFiles() {
             var ret = new Dictionary<FileInfo, List<PropRule>>();
@@ -65,6 +72,7 @@ namespace Bluscream.PropSpawner {
             //Utils.Warning("debug PropConfigManager.Matches start");
             var results = new List<PropRule>();
             foreach (var rule in Rules) {
+                if (!rule.Enabled.GetValueOrDefault(true)) continue;
                 var matches = rule.Matches(worldId, worldName, sceneName, instancePrivacy);
                 // Utils.Warning($"debug List<PropRule> Matches {rule} matches {matches}");
                 if (matches) results.Add(rule);
@@ -75,6 +83,7 @@ namespace Bluscream.PropSpawner {
         internal static void GenerateExamples() {
             var exampleConfig = new List<PropRule> {
                     new PropRule() {
+                        Enabled = false,
                         Name = "Spawn a random NavMeshFollower when joining any world",
                         PropSelectionRandom = 1,
                         Props = new List<Prop>() {
@@ -86,6 +95,7 @@ namespace Bluscream.PropSpawner {
                         }
                     },
                     new PropRule() {
+                        Enabled = false,
                         WorldId = "406acf24-99b1-4119-8883-4fcda4250743",
                         SceneName = "ThePurpleFoxV2",
                         Props = new List<Prop>() {
@@ -94,6 +104,7 @@ namespace Bluscream.PropSpawner {
                         }
                     },
                     new PropRule() {
+                        Enabled = false,
                         Name = "Let the grannies rule ✊",
                         WorldId = "6ae87c55-7159-4829-b94a-484fe030c766",
                         WorldName = "Forge World",
@@ -107,6 +118,21 @@ namespace Bluscream.PropSpawner {
                 };
             exampleConfig.ToFile(ConfigsDirectory.CombineFile(ExampleFileName));
             LoadConfigs();
+        }
+        internal static void SaveFile(FileInfo file, List<PropRule> rules = null, bool reloadAfterSave = true) {
+            rules ??= GetRulesByFile(file);
+
+            if (file.Exists) {
+                try {
+                    var _ = PropConfig.FromFile(file);
+                    //Utils.Log(_rules.ToJSON(false));
+                } catch (Exception ex) {
+                    Utils.Error($"Failed to load {file.str()}: {ex.Message}");
+                    file.CopyTo(file + ".broken", true);
+                }
+            }
+            rules.ToFile(file);
+            if (reloadAfterSave) LoadConfigs();
         }
         //internal static void SaveProp(string propId, Vector3? position = null, 
         internal static void SaveProp(Prop prop, string worldId = null, string worldName = null, string sceneName = null, string instancePrivacy = null, bool reloadAfterSave = true) {
