@@ -21,7 +21,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
         public static void ToggleMonitor() {
             if (monitorRoutine != null) {
                 Server.Stop();
-                MelonLogger.Warning($"old monitorRoutine already running, stopping");
+                Utils.Warn($"old monitorRoutine already running, stopping");
                 monitorRoutine = null;
             } else {
                 monitorRoutine = MelonCoroutines.Start(MonitorServer());
@@ -31,7 +31,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
         public static IEnumerator MonitorServer() {
             yield return new WaitForSeconds(1);
             Server.Start();
-            MelonLogger.Msg($"HTTP Server listening on {Extensions.ToString(Server.Prefixes)}");
+            Utils.Log($"HTTP Server listening on {Extensions.ToString(Server.Prefixes)}");
             while (ModuleConfig.Enabled.Value) {
                 var context = Server.GetContextAsync();
                 yield return new WaitUntil(() => context.IsCompleted);
@@ -46,12 +46,13 @@ namespace Bluscream.MoreChatNotifications.Modules {
                 Utils.Log($"[{DateTime.Now}] {request.HttpMethod} request from {client} to {fullUrl}");
                 switch (splitPath[0]) {
                     case "api":
+                        string requestBody; Dictionary<string, object> payload;
                         switch (splitPath[1]) {
                             case "chat":
                                 switch (splitPath[2]) {
                                     case "notify":
-                                        var requestBody = ReadRequestBody(request);
-                                        var payload = DeserializePayload(requestBody);
+                                        requestBody = ReadRequestBody(request);
+                                        payload = DeserializePayload(requestBody);
                                         Utils.SendChatNotification(payload.GetValue("message"), payload.GetValue("sound", "true").ToBoolean());
                                         break;
                                 }
@@ -59,9 +60,28 @@ namespace Bluscream.MoreChatNotifications.Modules {
                             case "hud":
                                 switch (splitPath[2]) {
                                     case "notify":
-                                        var requestBody = ReadRequestBody(request);
-                                        var payload = DeserializePayload(requestBody);
+                                        requestBody = ReadRequestBody(request);
+                                        payload = DeserializePayload(requestBody);
                                         Utils.HUDNotify(payload.GetValue("title"), payload.GetValue("message"), "(Remote) " + client);
+                                        break;
+                                }
+                                break;
+                            case "log":
+                                requestBody = ReadRequestBody(request);
+                                payload = DeserializePayload(requestBody);
+                                var logger = new MelonLogger.Instance((string)payload.GetValueOrDefault("title", AssemblyInfoParams.Name), color: System.Drawing.Color.FromName((string)payload.GetValueOrDefault("color", "white")));
+                                var level = (string)payload.GetValueOrDefault("level", null) ?? (string)payload.GetValueOrDefault("severity", "log");
+                                switch (level.ToLowerInvariant()) {
+                                    case "error":
+                                        logger.Error(payload.GetValue("message"));
+                                        break;
+                                    case "warn":
+                                    case "warning":
+                                        logger.Warning(payload.GetValue("message"));
+                                        break;
+                                    default:
+                                        // Utils.Error($"Unknown log level: {level}");
+                                        logger.Msg(payload.GetValue("message"));
                                         break;
                                 }
                                 break;
