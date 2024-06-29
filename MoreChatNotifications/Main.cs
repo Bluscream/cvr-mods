@@ -10,6 +10,8 @@ using ABI_RC.Systems.IK;
 using ABI_RC.Core.UI;
 using ABI_RC.Core.Networking.IO.Instancing;
 using Bluscream.MoreChatNotifications.Modules;
+using ABI_RC.Core.InteractionSystem;
+using ABI_RC.Core.Networking.IO.Social;
 
 namespace Bluscream.MoreChatNotifications;
 public class Mod : MelonMod {
@@ -59,9 +61,14 @@ public class Mod : MelonMod {
         if (!ModConfig.EnableMod.Value || FirstWorldLoaded) return;
         FirstWorldLoaded = true;
         Logger.Msg("OnFirstWorldLoaded");
+        //ViewManager.Instance.gameMenuView.View.RegisterForEvent("LoadInvites", new Action(OnInviteRecieved));
         //Logger.Msg($"HMD Name: {TrackerBatteryModule.GetHmdName()}");
         //Logger.Msg($"HMD Battery: {TrackerBatteryModule.GetDeviceBattery()}");
     }
+
+    //internal static void OnInviteRecieved() {
+
+    //}
 
     [HarmonyPatch]
     internal class HarmonyPatches {
@@ -71,7 +78,7 @@ public class Mod : MelonMod {
             if (!ModConfig.EnableMod.Value || !ModConfig.WorldDownloadNotificationsEnabled.Value || reset || stage != 1 || value == LastWorldPercent) return; // stage 1 = download
             //if (DelayCoroutine != null) MelonCoroutines.Stop(DelayCoroutine);
             var now = DateTime.Now;
-            if ((now - LastWorldTime).TotalMilliseconds > ModConfig.WorldDownloadNotificationsIntervalMS.Value) { // value == 0 || 
+            if (value == 0 || value == 100 || (now - LastWorldTime).TotalMilliseconds > ModConfig.WorldDownloadNotificationsIntervalMS.Value) {
                 Utils.SendChatNotification(
                     text: string.Format(ModConfig.WorldDownloadNotificationsTemplate.Value, value.ToString())
                 );
@@ -130,6 +137,43 @@ public class Mod : MelonMod {
                 text: string.Format(active ? ModConfig.MicrophoneNotificationTemplateUnmuted.Value : ModConfig.MicrophoneNotificationTemplateMuted.Value),
                 sendSoundNotification: ModConfig.MicrophoneNotificationSoundEnabled.Value
             );
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ViewManager), nameof(ViewManager.OnSeatedModeSwitched))]
+        internal static void AfterOnSeatedModeSwitched(bool active) {
+            if (!ModConfig.EnableMod.Value || !ModConfig.SeatedModeSwitchNotificationEnabled.Value) return;
+            Utils.SendChatNotification(
+                text: string.Format(active ? ModConfig.SeatedModeSwitchNotificationTemplateEnabled.Value : ModConfig.SeatedModeSwitchNotificationTemplateDisabled.Value),
+                sendSoundNotification: ModConfig.SeatedModeSwitchNotificationSoundEnabled.Value
+            );
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ViewManager), nameof(ViewManager.OnFlightModeSwitched))]
+        internal static void AfterOnFlightModeSwitched(bool active) {
+            if (!ModConfig.EnableMod.Value || !ModConfig.FlightModeSwitchNotificationEnabled.Value) return;
+            Utils.SendChatNotification(
+                text: string.Format(active ? ModConfig.FlightModeSwitchNotificationTemplateEnabled.Value : ModConfig.FlightModeSwitchNotificationTemplateDisabled.Value),
+                sendSoundNotification: ModConfig.FlightModeSwitchNotificationSoundEnabled.Value
+            );
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CohtmlHud), nameof(CohtmlHud.OnUiNotificationUpdate))]
+        internal static void AfterOnUiNotificationUpdate(ViewManager.UpdateTypes type) {
+            if (!ModConfig.EnableMod.Value || !ModConfig.InviteNotificationEnabled.Value) return;
+            string txt = null;
+            switch (type) {
+                case ViewManager.UpdateTypes.Invites:
+                    txt = ModConfig.InviteNotificationTemplateInvited.Value; break;
+                case ViewManager.UpdateTypes.FriendRequests:
+                    txt = ModConfig.InviteNotificationTemplateFriendRequest.Value; break;
+                case ViewManager.UpdateTypes.InviteRequests:
+                    txt = ModConfig.InviteNotificationTemplateInviteRequested.Value; break;
+                default:
+                    return;
+            }
+            if (txt != null) {
+                Utils.SendChatNotification(text: string.Format(txt), sendSoundNotification: ModConfig.InviteNotificationSoundEnabled.Value);
+            }
         }
     }
 }

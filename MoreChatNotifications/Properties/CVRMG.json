@@ -1,9 +1,9 @@
 {
 	"$schema": "https://github.com/Bluscream/cvr-mods/raw/master/mod.schema.json",
-	"_id": -1,
+	"_id": 209,
 	"author": "Bluscream",
-	"changelog": "- Fixed FBTModeSwitchNotificationsTemplateHalfBody not properly displaying",
-	"description": "Simple `Mod` that allows you to send additional notifications to other players via the ChatBox mod like\n- World Download Percentage\n- Instance Switching\n- Instance Rejoining\n- VR Mode Switching\n- FBT Switching\n\n",
+	"changelog": "- Fixed FBTModeSwitchNotificationsTemplateHalfBody not properly displaying\n+ Add FlightModeSwitchNotification\n+ Added SeatedModeSwitchNotification\n+ Added InviteNotification",
+	"description": "Simple `Mod` that allows you to send additional notifications to other players via the ChatBox mod like\n- World Download Percentage\n- Instance Switching\n- Instance Rejoining\n- Flight Mode Switching\n- VR Mode Switching\n- FBT Switching\n- Seated Mode Switching\n- Muting/Unmuting\n- Voice Status\n- Invite/Friend request recieved\n\n",
 	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/latest/download/MoreChatNotifications.dll",
 	"embedcolor": "006CFF",
 	"gameversion": "2024r175",

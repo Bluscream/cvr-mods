@@ -22,10 +22,21 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<string> InstanceRejoinNotificationsTemplate;
     internal static MelonPreferences_Entry<bool> InstanceRejoinNotificationsSoundEnabled;
 
+
+    internal static MelonPreferences_Entry<bool> FlightModeSwitchNotificationEnabled;
+    internal static MelonPreferences_Entry<string> FlightModeSwitchNotificationTemplateEnabled;
+    internal static MelonPreferences_Entry<string> FlightModeSwitchNotificationTemplateDisabled;
+    internal static MelonPreferences_Entry<bool> FlightModeSwitchNotificationSoundEnabled;
+
     internal static MelonPreferences_Entry<bool> VRModeSwitchNotificationsEnabled;
     internal static MelonPreferences_Entry<string> VRModeSwitchNotificationsTemplateVR;
     internal static MelonPreferences_Entry<string> VRModeSwitchNotificationsTemplateDesktop;
     internal static MelonPreferences_Entry<bool> VRModeSwitchNotificationsSoundEnabled;
+
+    internal static MelonPreferences_Entry<bool> SeatedModeSwitchNotificationEnabled;
+    internal static MelonPreferences_Entry<string> SeatedModeSwitchNotificationTemplateEnabled;
+    internal static MelonPreferences_Entry<string> SeatedModeSwitchNotificationTemplateDisabled;
+    internal static MelonPreferences_Entry<bool> SeatedModeSwitchNotificationSoundEnabled;
 
     internal static MelonPreferences_Entry<bool> FBTModeSwitchNotificationsEnabled;
     internal static MelonPreferences_Entry<string> FBTModeSwitchNotificationsTemplateFBT;
@@ -41,6 +52,12 @@ public static class ModConfig {
     internal static MelonPreferences_Entry<string> MicrophoneNotificationTemplateMuted;
     internal static MelonPreferences_Entry<string> MicrophoneNotificationTemplateUnmuted;
     internal static MelonPreferences_Entry<bool> MicrophoneNotificationSoundEnabled;
+
+    internal static MelonPreferences_Entry<bool> InviteNotificationEnabled;
+    internal static MelonPreferences_Entry<string> InviteNotificationTemplateInvited;
+    internal static MelonPreferences_Entry<string> InviteNotificationTemplateInviteRequested;
+    internal static MelonPreferences_Entry<string> InviteNotificationTemplateFriendRequest;
+    internal static MelonPreferences_Entry<bool> InviteNotificationSoundEnabled;
 
 
 
@@ -78,6 +95,15 @@ public static class ModConfig {
         InstanceRejoinNotificationsSoundEnabled = _melonCategory.CreateEntry("Instance rejoin notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
+        FlightModeSwitchNotificationEnabled = _melonCategory.CreateEntry("Flight Mode switch notifications", false,
+            description: "Will automatically send ChatBox notifications when you toggle Flight mode");
+        FlightModeSwitchNotificationTemplateEnabled = _melonCategory.CreateEntry("Flight mode enable template", "Enabled Flight Mode",
+            description: "Template for Flight mode disable notifications");
+        FlightModeSwitchNotificationTemplateDisabled = _melonCategory.CreateEntry("Flight mode disable template", "Disabled Flight Mode",
+            description: "Template for Flight mode enable notifications");
+        FlightModeSwitchNotificationSoundEnabled = _melonCategory.CreateEntry("Flight mode switch notification sound", false,
+            description: "Will play a sound to other users when the notification is sent", is_hidden: true);
+
         VRModeSwitchNotificationsEnabled = _melonCategory.CreateEntry("VR Mode switch notifications", true,
             description: "Will automatically send ChatBox notifications when you switch between VR/Desktop mode");
         VRModeSwitchNotificationsTemplateVR = _melonCategory.CreateEntry("VR mode switch template", "Switched to VR",
@@ -85,6 +111,15 @@ public static class ModConfig {
         VRModeSwitchNotificationsTemplateDesktop = _melonCategory.CreateEntry("Desktop mode switch template", "Switched to Desktop",
             description: "Template for Desktop mode switch notifications");
         VRModeSwitchNotificationsSoundEnabled = _melonCategory.CreateEntry("VR Mode switch notification sound", false,
+            description: "Will play a sound to other users when the notification is sent");
+
+        SeatedModeSwitchNotificationEnabled = _melonCategory.CreateEntry("Seated Mode switch notifications", true,
+            description: "Will automatically send ChatBox notifications when you switch between Seated/Standing mode");
+        SeatedModeSwitchNotificationTemplateEnabled = _melonCategory.CreateEntry("Seated mode template", "Switched to Seated Mode",
+            description: "Template for Seated mode switch notifications");
+        SeatedModeSwitchNotificationTemplateDisabled = _melonCategory.CreateEntry("Standing mode template", "Switched to Standing Mode",
+            description: "Template for Standing mode switch notifications");
+        SeatedModeSwitchNotificationSoundEnabled = _melonCategory.CreateEntry("Seated Mode switch notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
 
         FBTModeSwitchNotificationsEnabled = _melonCategory.CreateEntry("FBT Mode switch notifications", true,
@@ -112,6 +147,17 @@ public static class ModConfig {
         MicrophoneNotificationTemplateUnmuted = _melonCategory.CreateEntry("Microphone unmuted template", "Microphone unmuted",
             description: "Template for Microphone unmuted notifications");
         MicrophoneNotificationSoundEnabled = _melonCategory.CreateEntry("Microphone notification sound", false,
+            description: "Will play a sound to other users when the notification is sent", is_hidden: true);
+
+        InviteNotificationEnabled = _melonCategory.CreateEntry("Invite notifications", false,
+            description: "Will automatically send ChatBox notifications when you get invited to another instance");
+        InviteNotificationTemplateInvited = _melonCategory.CreateEntry("Invited template", "Got Invited", description: "Template for invites");
+        InviteNotificationTemplateInviteRequested = _melonCategory.CreateEntry("Invite request template", "Got Invite Request", description: "Template for invite requests");
+        InviteNotificationTemplateFriendRequest = _melonCategory.CreateEntry("Friend request template", "Got Friend Request", description: "Template for friend requests");
+        //InviteNotificationTemplateInvited = _melonCategory.CreateEntry("Invited template", "Got Invited to {0} by {1}", description: "Template for invites ({0}=world name,{1}=requester name)");
+        //InviteNotificationTemplateInviteRequested = _melonCategory.CreateEntry("Invite request template", "Got Invite Request from {0}", description: "Template for invite requests ({0}=requester name)");
+        //InviteNotificationTemplateFriendRequest = _melonCategory.CreateEntry("Friend request template", "Got Friend Request from {0}", description: "Template for friend requests ({0}=requester name)");
+        InviteNotificationSoundEnabled = _melonCategory.CreateEntry("Invite notification sound", false,
             description: "Will play a sound to other users when the notification is sent");
     }
 }

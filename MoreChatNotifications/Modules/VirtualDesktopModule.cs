@@ -89,7 +89,7 @@ namespace Bluscream.MoreChatNotifications.Modules {
             internal static MelonPreferences_Entry<bool> Exclusive;
             public static void InitializeMelonPrefs() {
                 Category = MelonPreferences.GetCategory(AssemblyInfoParams.Name);
-                Enabled = Category.CreateEntry("VirtualDesktop notifications (Requires admin privileges for ChilloutVR)", true,
+                Enabled = Category.CreateEntry("VirtualDesktop notifications (Requires admin privileges for ChilloutVR)", false,
                     description: "Will automatically send ChatBox notifications when your VR Headset disconnects from VirtualDesktop while you're in VR mode (VirtualDesktop.Server.exe quits)");
                 Enabled.OnEntryValueChanged.Subscribe((_, newValue) => { ToggleMonitor(); });
                 Interval = Category.CreateEntry("VirtualDesktop check interval (s)", 1f,
