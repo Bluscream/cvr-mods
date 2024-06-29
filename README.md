@@ -24,6 +24,30 @@ Thanks for the great work on the repository template and mod skeleton [@kafeijao
 
 ---
 
+## Setup auto updates using CVRUnverifiedModUpdaterPlugin
+
+1. Download the updater from [here](https://github.com/kafeijao/Kafe_CVR_Mods/blob/master/CVRUnverifiedModUpdaterPlugin/README.md#cvrunverifiedmodupdaterplugin) and put it in your `ChilloutVR\Plugins\` folder.
+2. Start your game once to let it generate its config files.
+3. Close the game and open `ChilloutVR\UserData\CVRUnverifiedModUpdaterPluginConfig.json` and add the following inbetween the [] after "RepoConfigs":
+
+```json
+{
+      "Owner": "Bluscream",
+      "Repo": "cvr-mods",
+      "Files": [
+        { "Name": "MoreChatNotifications.dll", "Type": "Mod" },
+        { "Name": "MoreLogging.dll", "Type": "Mod" },
+        { "Name": "PropSpawner.dll", "Type": "Mod" },
+        { "Name": "PublicSafety.dll", "Type": "Mod" },
+        { "Name": "VRModeSwitchHotkey.dll", "Type": "Mod" },
+        { "Name": "HTTPServer.dll", "Type": "Mod" },
+        { "Name": "PlayerRagdollMod.dll", "Type": "Mod" },
+        { "Name": "BTKUILib.dll", "Type": "Mod" },
+        { "Name": "ChatBox.dll", "Type": "Mod" }
+      ]
+    }
+```
+
 ## Building
 
 In order to build this project follow the instructions (thanks [@Daky](https://github.com/dakyneko)):
