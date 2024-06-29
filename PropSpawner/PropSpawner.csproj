@@ -15,6 +15,11 @@
     <Exec Command="&quot;C:\Program Files (x86)\Steam\steam.exe&quot; steam://rungameid/661130" IgnoreExitCode="true" />
   </Target>
   <ItemGroup>
+    <Reference Include="BTKUILib">
+      <HintPath>G:\Steam\steamapps\common\ChilloutVR\Mods\BTKUILib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

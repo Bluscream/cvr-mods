@@ -14,8 +14,8 @@
 		"props"
 	],
 	"requirements": [],
-	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/latest/download/PropSpawner.dll",
+	"downloadlink": "https://github.com/Bluscream/cvr-mods/releases/download/05%2F28%2F2024/PropSpawner.dll",
 	"sourcelink": "https://github.com/Bluscream/cvr-mods/tree/master/PropSpawner",
-	"changelog": "- Initial release.",
+	"changelog": "- Initial release.\n- Added PropRule.Enabled field",
 	"embedcolor": "006CFF"
 }
