@@ -31,7 +31,7 @@ Thanks for the great work on the repository template and mod skeleton [@kafeijao
 3. Close the game and open `ChilloutVR\UserData\CVRUnverifiedModUpdaterPluginConfig.json` and add the following inbetween the [] after "RepoConfigs":
 
 ```json
-{
+    {
       "Owner": "Bluscream",
       "Repo": "cvr-mods",
       "Files": [
